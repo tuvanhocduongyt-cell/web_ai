@@ -177,40 +177,52 @@ if os.path.exists(pdf_folder):
 
 docs_list = [
     {
-        "title": "Tài liệu Anh 12",
-        "link": "https://docs.google.com/document/d/1_pXGbZQHw_OeWcpYwQYw1Yu4vKxBMV6fZWxm4dmsXLg/edit?usp=sharing"
+        "title": "Bộ đề tham tham khảo lịch sử THPT D21",
+        "link": "https://drive.google.com/file/d/1qIS83JH_9OpTk_tR9bwhl61F_EETPaFk/view?usp=sharing"
     },
     {
-        "title": "Tài liệu Lý 12",
-        "link": "https://docs.google.com/document/d/1_pXGbZQHw_OeWcpYwQYw1Yu4vKxBMV6fZWxm4dmsXLg/edit?usp=sharing"
+        "title": "Bộ đề tham tham khảo lịch sử THPT D22",
+        "link": "https://drive.google.com/file/d/1dxNrWXjxLlO97ZAAb-E-s56n6peCYrqp/view?usp=sharing"
     },
     {
-        "title": "Tài liệu Toán 12",
-        "link": ""
+        "title": "Bộ đề tham tham khảo lịch sử THPT D23",
+        "link": "https://drive.google.com/file/d/16jaAmn-87QN7kiYzB7dIcF0fjRGpPLJg/view?usp=sharing"
     },
     {
-        "title": "Tài liệu Lý 12",
-        "link": ""
+        "title": "Bộ đề tham tham khảo lịch sử THPT D24",
+        "link": "https://drive.google.com/file/d/1p8GQ5aHna5H8q0ujq26tK7uqjT5v3P-1/view?usp=sharing"
     },
     {
-        "title": "Tài liệu Toán 12",
-        "link": ""
+        "title": "Bộ đề tham tham khảo lịch sử THPT D25",
+        "link": "https://drive.google.com/file/d/1IUtEbTVS4-mRmyBEV6gbDGjHxJHAtgSf/view?usp=sharing"
     },
     {
-        "title": "Tài liệu Lý 12",
-        "link": ""
+        "title": "Bộ đề tham tham khảo lịch sử THPT D26",
+        "link": "https://drive.google.com/file/d/1CXVEz6NPRusUaVJE3HRTOBm6neYbcmge/view?usp=sharing"
     },
     {
-        "title": "Tài liệu Toán 12",
-        "link": ""
+        "title": "Bộ đề tham tham khảo lịch sử THPT D27",
+        "link": "https://drive.google.com/file/d/1NlCO6a7kTCortwWU0BC2Yme3sTH4xBOV/view?usp=sharing"
     },
     {
-        "title": "Tài liệu Lý 12",
-        "link": ""
+        "title": "Bộ đề tham tham khảo lịch sử THPT 28",
+        "link": "https://drive.google.com/file/d/1M7FLkTU4P35ljfghkjvuDEHV1k5ZrTv3/view?usp=sharing"
     },
     {
-        "title": "Tài liệu Hóa 12",
-        "link": ""
+        "title": "Bộ đề tham tham khảo lịch sử THPT D29",
+        "link": "https://drive.google.com/file/d/1Ob-hF8P1_itOvZoKWk0JUNzpLxQTGHdZ/view?usp=sharing"
+    },
+    {
+        "title": "Bộ đề tham tham khảo lịch sử THPT D30",
+        "link": "https://drive.google.com/file/d/16_xfgmEqr_HSF2rD0jLZOj00CTDiSfDQ/view?usp=sharing"
+    },
+    {
+        "title": "Tài liệu ôn thi",
+        "link": "https://drive.google.com/file/d/1N23yjH5L4f5ySms8Q3dlXllB9YmG5Lt2/view?usp=drive_link"
+    },
+    {
+        "title": "Kiến thức trọng tâm",
+        "link": "https://drive.google.com/file/d/1NPZIZkZ0q9PEY1JdV9zjSvtJD_0ykEo2/view?usp=drive_link"
     }
 ]
 
