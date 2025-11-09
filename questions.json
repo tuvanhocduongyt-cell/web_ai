@@ -1128,5 +1128,326 @@
       "answer": "Lý Thường Kiệt",
       "difficulty": 1
     }
+  ],
+  "bai_3": [
+    {
+      "question": "Cách mạng tháng Hai năm 1917 ở Nga đã lật đổ",
+      "options": ["Chế độ phong kiến", "Nhà nước tư sản", "Chính quyền vô sản", "Giai cấp tư sản"],
+      "answer": "Chế độ phong kiến",
+      "difficulty": 1
+    },
+    {
+      "question": "Giai cấp nào sau đây giữ vai trò lãnh đạo cuộc Cách mạng tháng Mười (1917) ở nước Nga?",
+      "options": ["Tư sản", "Nông dân", "Vô sản", "Địa chủ"],
+      "answer": "Vô sản",
+      "difficulty": 1
+    },
+    {
+      "question": "Cách mạng tháng Mười năm 1917 ở Nga đã lật đổ",
+      "options": ["Chế độ thực dân", "Nhà nước phát xít", "Chính quyền vô sản", "Chính quyền tư sản"],
+      "answer": "Chính quyền tư sản",
+      "difficulty": 1
+    },
+    {
+      "question": "Liên bang Cộng hòa xã hội chủ nghĩa Xô viết thành lập có ý nghĩa nào sau đây?",
+      "options": [
+        "Thúc đẩy sự phát triển của cách mạng thế giới",
+        "Làm sụp đổ hệ thống tư bản chủ nghĩa",
+        "Đưa giai cấp nô lệ lên nắm chính quyền",
+        "Mở đầu kỷ nguyên độc lập, tự do cho nhân loại"
+      ],
+      "answer": "Thúc đẩy sự phát triển của cách mạng thế giới",
+      "difficulty": 2
+    },
+    {
+      "question": "Năm 1922, Liên bang Cộng hòa xã hội chủ nghĩa Xô viết ra đời đã",
+      "options": [
+        "Đánh dấu hoàn thành công cuộc đấu tranh chống thù trong, giặc ngoài",
+        "Chứng tỏ chế độ quân chủ chuyên chế đã hoàn toàn bị sụp đổ",
+        "Đánh dấu sự phát triển của chế độ xã hội chủ nghĩa trên thế giới",
+        "Đánh dấu hoàn thành công cuộc xây dựng chế độ xã hội chủ nghĩa"
+      ],
+      "answer": "Đánh dấu sự phát triển của chế độ xã hội chủ nghĩa trên thế giới",
+      "difficulty": 2
+    },
+    {
+      "question": "Nước nào sau đây tham gia Liên bang Cộng hòa xã hội chủ nghĩa Xô viết năm 1922?",
+      "options": ["Nga", "Anh", "Pháp", "Mĩ"],
+      "answer": "Nga",
+      "difficulty": 1
+    },
+    {
+      "question": "Cách mạng tháng Hai năm 1917 ở Nga đã",
+      "options": [
+        "Đưa nước Nga ra khỏi cuộc Chiến tranh thế giới",
+        "Lật đổ được chế độ quân chủ chuyên chế",
+        "Lật đổ được Chính phủ tư sản lâm thời",
+        "Giải phóng các dân tộc khỏi chủ nghĩa tư bản"
+      ],
+      "answer": "Lật đổ được chế độ quân chủ chuyên chế",
+      "difficulty": 1
+    },
+    {
+      "question": "Cách mạng tháng Mười năm 1917 ở Nga đã",
+      "options": [
+        "Hoàn thành cuộc cách mạng văn hóa vô sản",
+        "Lật đổ được chế độ quân chủ chuyên chế",
+        "Lật đổ được Chính phủ tư sản lâm thời",
+        "Giải phóng loài người khỏi chế độ phát xít"
+      ],
+      "answer": "Lật đổ được Chính phủ tư sản lâm thời",
+      "difficulty": 1
+    },
+    {
+      "question": "Cách mạng tháng Mười Nga năm 1917 có tác động nào sau đây đến cách mạng Việt Nam?",
+      "options": [
+        "Xác định được kẻ thù nguy hiểm nhất cho cách mạng Việt Nam",
+        "Là nguồn cổ vũ, động viên to lớn cho cách mạng Việt Nam",
+        "Tạo cơ sở để thiết lập quan hệ ngoại giao với Liên bang Nga",
+        "Là nguyên nhân dẫn đến thắng lợi của Cách mạng tháng Tám"
+      ],
+      "answer": "Là nguồn cổ vũ, động viên to lớn cho cách mạng Việt Nam",
+      "difficulty": 2
+    },
+    {
+      "question": "Năm 1922, quốc gia nào sau đây tham gia Liên bang Cộng hòa xã hội chủ nghĩa Xô viết?",
+      "options": ["Ucraina", "Áchentina", "Braxin", "Campuchia"],
+      "answer": "Ucraina",
+      "difficulty": 1
+    },
+    {
+      "question": "Nội dung nào sau đây là tác động từ cuộc Cách mạng tháng Mười Nga năm 1917 đến cách mạng Việt Nam?",
+      "options": [
+        "Xác định được kẻ thù chính cho cách mạng Việt Nam",
+        "Để lại bài học kinh nghiệm về hình thức đấu tranh công khai, hợp pháp",
+        "Tạo cơ sở để thiết lập quan hệ ngoại giao với Liên Xô",
+        "Giúp cách mạng Việt Nam xác định được con đường cứu nước đúng đắn"
+      ],
+      "answer": "Giúp cách mạng Việt Nam xác định được con đường cứu nước đúng đắn",
+      "difficulty": 2
+    },
+    {
+      "question": "Cách mạng tháng Mười năm 1917 ở Nga có ý nghĩa nào sau đây?",
+      "options": [
+        "Thành lập nhà nước cộng hòa tư sản",
+        "Giải phóng nhân dân lao động",
+        "Lật đổ chính quyền vô sản",
+        "Lật nhào chế độ phát xít"
+      ],
+      "answer": "Giải phóng nhân dân lao động",
+      "difficulty": 1
+    },
+    {
+      "question": "Nội dung nào sau đây là nhiệm vụ của cuộc Cách mạng tháng Hai năm 1917 ở Nga?",
+      "options": [
+        "Lật đổ chế độ phong kiến Nga hoàng",
+        "Giải quyết triệt để mâu thuẫn giữa vô sản và tư sản",
+        "Xóa bỏ tình trạng hai chính quyền song song tồn tại",
+        "Lật đổ sự cầm quyền của giai cấp tư sản"
+      ],
+      "answer": "Lật đổ chế độ phong kiến Nga hoàng",
+      "difficulty": 1
+    },
+    {
+      "question": "Năm 1922, Liên Xô ra đời có ý nghĩa nào sau đây?",
+      "options": [
+        "Đưa nhân loại vào kỉ nguyên độc lập và dân chủ",
+        "Thúc đẩy sự phát triển của cách mạng thế giới",
+        "Giải phóng nhân dân lao động toàn thế giới",
+        "Mở đầu thời đại đấu tranh giải phóng dân tộc"
+      ],
+      "answer": "Thúc đẩy sự phát triển của cách mạng thế giới",
+      "difficulty": 1
+    },
+    {
+      "question": "Năm 1917, nhân dân Nga thực hiện nhiệm vụ nào sau đây?",
+      "options": [
+        "Hoàn thành phổ cập giáo dục đại học",
+        "Chống chủ nghĩa phát xít",
+        "Tiến hành cách mạng công nghiệp",
+        "Thành lập Chính phủ Xô viết"
+      ],
+      "answer": "Thành lập Chính phủ Xô viết",
+      "difficulty": 1
+    },
+    {
+      "question": "Cách mạng tháng Mười Nga năm 1917 thực hiện nhiệm vụ nào sau đây?",
+      "options": [
+        "Bảo vệ đất nước trước thế lực phát xít",
+        "Đấu tranh chống phản động thuộc địa",
+        "Thành lập nhà nước phong kiến mới",
+        "Giành chính quyền về tay nhân dân"
+      ],
+      "answer": "Giành chính quyền về tay nhân dân",
+      "difficulty": 1
+    },
+    {
+      "question": "Cách mạng tháng Mười Nga năm 1917 thành công có ý nghĩa nào sau đây?",
+      "options": [
+        "Chủ nghĩa xã hội trở thành hệ thống hoàn chỉnh trên thế giới",
+        "Mở ra con đường giải phóng cho các dân tộc thuộc địa, lệ thuộc",
+        "Xoá bỏ hệ thống kinh tế bóc lột của chủ nghĩa tư bản ở châu Âu",
+        "Hoàn thành cuộc đấu tranh chống áp bức, bóc lột trên thế giới"
+      ],
+      "answer": "Mở ra con đường giải phóng cho các dân tộc thuộc địa, lệ thuộc",
+      "difficulty": 2
+    },
+    {
+      "question": "Ngay sau Cách mạng tháng Mười Nga năm 1917, Chính phủ Xô viết đã thông qua văn kiện nào sau đây?",
+      "options": [
+        "Hiến chương Liên hợp quốc",
+        "Tuyên ngôn Quốc tế Nhân quyền",
+        "Hiệp ước Ba-li",
+        "Sắc lệnh ruộng đất"
+      ],
+      "answer": "Sắc lệnh ruộng đất",
+      "difficulty": 1
+    },
+    {
+      "question": "Thắng lợi của Cách mạng tháng Mười Nga năm 1917 có ý nghĩa nào sau đây?",
+      "options": [
+        "Tiếp tục mở rộng phạm vi ảnh hưởng của chủ nghĩa xã hội ra toàn cầu",
+        "Đánh dấu chủ nghĩa xã hội trở thành hệ thống duy nhất trên thế giới",
+        "Làm cho chủ nghĩa tư bản không còn là hệ thống duy nhất trên thế giới",
+        "Xoá bỏ hoàn toàn tình trạng áp bức, bóc lột trên phạm vi toàn thế giới"
+      ],
+      "answer": "Làm cho chủ nghĩa tư bản không còn là hệ thống duy nhất trên thế giới",
+      "difficulty": 2
+    }
+  ],
+  "bai_4": [
+    {
+      "question": "Liên Hợp Quốc được thành lập nhằm mục đích nào sau đây?",
+      "options": [
+        "Phát triển mối quan hệ giữa các dân tộc",
+        "Kết thúc mọi tranh chấp trên thế giới",
+        "Quốc tế hóa chiến tranh xâm lược",
+        "Tiến lên xây dựng chủ nghĩa xã hội"
+      ],
+      "answer": "Phát triển mối quan hệ giữa các dân tộc",
+      "difficulty": 1
+    },
+    {
+      "question": "Nội dung nào sau đây là nguyên tắc hoạt động của Liên hợp quốc?",
+      "options": [
+        "Không can thiệp vào công việc nội bộ của các quốc gia",
+        "Thống nhất về thể chế chính trị giữa các quốc gia",
+        "Giải quyết các tranh chấp quốc tế bằng mọi giá",
+        "Bình đẳng về kinh tế của tất cả các quốc gia thành viên"
+      ],
+      "answer": "Không can thiệp vào công việc nội bộ của các quốc gia",
+      "difficulty": 1
+    },
+    {
+      "question": "Liên Hợp Quốc được thành lập nhằm mục đích nào sau đây?",
+      "options": [
+        "Tăng cường hợp tác quốc tế giữa các nước",
+        "Thống nhất thể chế chính trị trên thế giới",
+        "Tạo sự phát triển như nhau cho mọi nước",
+        "Giành thắng lợi trong cuộc Chiến tranh lạnh"
+      ],
+      "answer": "Tăng cường hợp tác quốc tế giữa các nước",
+      "difficulty": 1
+    },
+    {
+      "question": "Từ sau Chiến tranh thế giới thứ hai đến nay, Liên hợp quốc có đóng góp nào sau đây?",
+      "options": [
+        "Thủ tiêu được tình trạng bóc lột, thúc đẩy sự tiến bộ, công bằng xã hội",
+        "Giải quyết triệt để mối quan hệ giữa phát triển kinh tế và tiến bộ xã hội",
+        "Góp phần giải quyết các cuộc khủng hoảng lớn trên quy mô toàn cầu",
+        "Đảm bảo công bằng xã hội và chấm dứt các cuộc chiến tranh trên thế giới"
+      ],
+      "answer": "Góp phần giải quyết các cuộc khủng hoảng lớn trên quy mô toàn cầu",
+      "difficulty": 1
+    },
+    {
+      "question": "Liên Hợp Quốc được thành lập nhằm mục đích nào sau đây?",
+      "options": [
+        "Kết thúc trật tự thế giới đơn cực",
+        "Thúc đẩy hòa bình và an ninh thế giới",
+        "Giúp Liên Xô xây dựng đất nước",
+        "Thiết lập quan hệ đối ngoại với ASEAN"
+      ],
+      "answer": "Thúc đẩy hòa bình và an ninh thế giới",
+      "difficulty": 1
+    },
+    {
+      "question": "Quốc gia nào sau đây đóng vai trò quyết định trong việc thành lập Liên hợp quốc?",
+      "options": ["Mĩ", "Bỉ", "Hàn Quốc", "Nhật Bản"],
+      "answer": "Mĩ",
+      "difficulty": 1
+    },
+    {
+      "question": "Nội dung nào sau đây là vai trò xuyên suốt của Liên hợp quốc?",
+      "options": [
+        "Định hướng thể chế chính trị cho các quốc gia thành viên",
+        "Góp phần vào sự phát triển văn hóa giáo dục của các nước",
+        "Ngăn chặn được các cuộc chiến tranh và xung đột khu vực",
+        "Xóa bỏ hoàn toàn tình trạng đói nghèo ở các quốc gia Trung Phi"
+      ],
+      "answer": "Góp phần vào sự phát triển văn hóa giáo dục của các nước",
+      "difficulty": 1
+    },
+    {
+      "question": "Liên Hợp Quốc đề ra nguyên tắc hoạt động nào sau đây?",
+      "options": [
+        "Ưu tiên quyền lợi cho các nước lớn mạnh",
+        "Giúp đỡ các nước nghèo phát triển kinh tế",
+        "Tôn trọng toàn vẹn lãnh thổ của các nước",
+        "Chia đều nguồn tài chính cho tất cả quốc gia"
+      ],
+      "answer": "Tôn trọng toàn vẹn lãnh thổ của các nước",
+      "difficulty": 1
+    },
+    {
+      "question": "Năm 1945, quốc gia nào sau đây gia nhập Liên hợp quốc?",
+      "options": ["Anh", "Việt Nam", "Hàn Quốc", "Đức"],
+      "answer": "Anh",
+      "difficulty": 1
+    },
+    {
+      "question": "Nội dung nào sau đây là vai trò Liên hợp quốc?",
+      "options": [
+        "Thúc đẩy hợp tác quốc tế về kinh tế, tài chính",
+        "Chấm dứt chiến tranh thế giới thứ hai",
+        "Thúc đẩy cách mạng công nghiệp lần thứ nhất",
+        "Chấm dứt chiến tranh thế giới thứ nhất"
+      ],
+      "answer": "Thúc đẩy hợp tác quốc tế về kinh tế, tài chính",
+      "difficulty": 1
+    },
+    {
+      "question": "Kể từ khi thành lập đến nay Liên hợp quốc đóng vai trò",
+      "options": [
+        "Duy trì hoà bình và an ninh thế giới",
+        "Khởi đầu cuộc Cách mạng công nghiệp 4.0",
+        "Xoá bỏ mọi bất bình đẳng trên thế giới",
+        "Đánh bại chủ nghĩa phát xít và quân phiệt"
+      ],
+      "answer": "Duy trì hoà bình và an ninh thế giới",
+      "difficulty": 1
+    },
+    {
+      "question": "Nội dung nào sau đây là đóng góp của Liên hợp quốc kể từ khi thành lập đến nay?",
+      "options": [
+        "Xoá bỏ chế độ chiếm hữu nô lệ",
+        "Giành độc lập cho nhiều quốc gia",
+        "Góp phần xoá bỏ chế độ thực dân",
+        "Chấm dứt mọi cuộc chiến tranh"
+      ],
+      "answer": "Góp phần xoá bỏ chế độ thực dân",
+      "difficulty": 1
+    },
+    {
+      "question": "Thực tiễn hoạt động của Liên hợp quốc và Hiệp hội các quốc gia Đông Nam Á cho thấy",
+      "options": [
+        "Các quốc gia khi được kết nạp là thành viên đều đã được giành độc lập, chủ quyền",
+        "Các quốc gia thành viên có sự đa dạng về thể chế chính trị, trình độ phát triển cao",
+        "Đây là những tổ chức liên chính phủ xây dựng các mục tiêu mang tính thời đại",
+        "Các cường quốc trong tổ chức đơn phương định đoạt những vấn đề của toàn cầu"
+      ],
+      "answer": "Đây là những tổ chức liên chính phủ xây dựng các mục tiêu mang tính thời đại",
+      "difficulty": 2
+    }
   ]
 }

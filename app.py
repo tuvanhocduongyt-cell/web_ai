@@ -515,9 +515,9 @@ def emotion_journal():
     history = users.get(username, {}).get('logs', [])
 
     music_videos = {
-        "Đom Đóm": "https://www.youtube.com/embed/HTwrVZ0eExvuE05p",
-        "Nắng Thơ": "https://www.youtube.com/embed/HTwrVZ0eExvuE05p",
-        "Nevada": "https://www.youtube.com/embed/d9MyW72ELq0"
+        "Giảm căng thẳng": "https://www.youtube.com/embed/e8fFEmMW5EI&t",
+        "Piano": "https://www.youtube.com/embed/tVQ_uDRs_7U",
+        "Bình yên": "https://www.youtube.com/embed/MLQZOGJeBLA"
     }
 
     tz_vn = pytz.timezone('Asia/Ho_Chi_Minh')
