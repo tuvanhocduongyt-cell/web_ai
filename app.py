@@ -980,16 +980,33 @@ def upload_image():
 
         try:
             img = Image.open(image_path)
-            response = model.generate_content([
-                img,
-                "Đây là ảnh bài làm của học sinh. Hãy phân tích nội dung, chỉ ra lỗi sai nếu có, và đề xuất cải thiện."
-            ])
+            
+            # Prompt được cải thiện
+            prompt = """Bạn là giáo viên Lịch sử chấm bài. Phân tích bài làm này NGẮN GỌN theo format:
+
+📊 ĐIỂM: [X/10]
+
+✅ ĐIỂM MẠNH:
+- [Điểm mạnh 1]
+- [Điểm mạnh 2]
+
+❌ LỖI SAI (nếu có):
+- "Trích nguyên văn lỗi trong bài" → Sửa: [giải thích đúng]
+- "Trích nguyên văn lỗi khác" → Sửa: [giải thích đúng]
+
+💡 GỢI Ý:
+[1-2 câu gợi ý cải thiện]
+
+LƯU Ý: 
+- Phải TRÍCH NGUYÊN VĂN câu/đoạn sai trong bài làm (đặt trong dấu ngoặc kép)
+- Chỉ ra lỗi CỤ THỂ: sai sự kiện, sai năm tháng, sai khái niệm, thiếu logic...
+- Tối đa 150 từ"""
+
+            response = model.generate_content([img, prompt])
             ai_feedback = response.text
             
-            # Format lại response: thay thế markdown bằng HTML
-            ai_feedback = ai_feedback.replace('**', '')
-            ai_feedback = ai_feedback.replace('##', '')
-            ai_feedback = ai_feedback.replace('###', '')
+            # Format lại response
+            ai_feedback = ai_feedback.replace('**', '<strong>').replace('**', '</strong>')
             ai_feedback = ai_feedback.replace('\n', '<br>')
             
         except Exception as e:
