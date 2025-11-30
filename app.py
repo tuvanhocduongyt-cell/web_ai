@@ -34,7 +34,9 @@ app.secret_key = "phuonganh2403"
 vn_timezone = pytz.timezone('Asia/Ho_Chi_Minh')
 timestamp = datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S")
 
-os.environ["GOOGLE_API_KEY"] = "AIzaSyDx4KnyXaBKZIVHiFuiDjBUwkX8tPY8XuQ"
+os.environ["GOOGLE_API_KEY"] = "AIzaSyD8RH8LMjgeNAyzmq3tXsEO6OWdR47AGnA"
+########### 
+### AIzaSyDx4KnyXaBKZIVHiFuiDjBUwkX8tPY8XuQ
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
 
 model = genai.GenerativeModel("models/gemini-2.0-flash")
