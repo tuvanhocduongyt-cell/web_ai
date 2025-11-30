@@ -59,9 +59,9 @@ def build_prompt(topic, context_data, user_input, is_first_message=False):
     context_summary = context_data[:1500] if context_data else ""
     
     if topic == "tam_li":
-        intro = "Chào bạn, tôi là trợ lý AI của cô Phạm Hằng chuyên về lĩnh vực lịch sử.\n\n" if is_first_message else ""
+        intro = "Chào bạn, tôi là trợ lý AI Tâm An chuyên về lĩnh vực tâm lí.\n\n" if is_first_message else ""
         return (
-            f"Bạn là trợ lý AI của cô Phạm Hằng, chuyên về lịch sử.\n"
+            f"tôi là trợ lý AI Tâm An chuyên về lĩnh vực tâm lí.\n"
             f"Dữ liệu tham khảo:\n{context_summary}\n\n"
             f"QUY TẮC:\n"
             f"- Ưu tiên dùng dữ liệu trên nếu liên quan\n"
