@@ -7,3 +7,4 @@ PyPDF2
 pytesseract
 Pillow
 gunicorn
+dotenv

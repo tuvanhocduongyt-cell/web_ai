@@ -16,7 +16,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-
+from dotenv import load_dotenv
 import google.generativeai as genai
 import PyPDF2
 import pytz
@@ -34,11 +34,13 @@ app.secret_key = "phuonganh2403"
 vn_timezone = pytz.timezone('Asia/Ho_Chi_Minh')
 timestamp = datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S")
 
-os.environ["GOOGLE_API_KEY"] = "AIzaSyAkA8wr0uBjUioC6mVmsHqYTLzr9upbNDM"
-########### 
-### AIzaSyDx4KnyXaBKZIVHiFuiDjBUwkX8tPY8XuQ
-genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+load_dotenv()  # Load từ file .env
 
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+if not GOOGLE_API_KEY:
+    raise ValueError("Không tìm thấy GOOGLE_API_KEY trong environment")
+
+genai.configure(api_key=GOOGLE_API_KEY)
 model = genai.GenerativeModel("models/gemini-2.5-flash")
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
