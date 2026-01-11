@@ -1,0 +1,396 @@
+{% extends "layout.html" %}
+
+{% block title %}Chi tiết bài làm{% endblock %}
+
+{% block extra_css %}
+<style>
+    .score-box {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+    
+    .score-box h2 {
+        color: white;
+        font-size: 56px;
+        margin-bottom: 10px;
+    }
+    
+    .score-box h2::after {
+        display: none;
+    }
+    
+    .score-box p {
+        font-size: 18px;
+        opacity: 0.95;
+        margin: 0;
+    }
+    
+    .info-box {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        border-left: 4px solid #667eea;
+    }
+    
+    .info-box p {
+        margin: 10px 0;
+        color: #2c3e50;
+        font-size: 15px;
+    }
+    
+    .question-block {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        border-left: 5px solid #667eea;
+        transition: all 0.3s ease;
+    }
+    
+    .question-block:hover {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .question-block.correct {
+        border-left-color: #28a745;
+        background: #d4edda;
+    }
+    
+    .question-block.wrong {
+        border-left-color: #dc3545;
+        background: #f8d7da;
+    }
+    
+    .question-block.partial {
+        border-left-color: #ffc107;
+        background: #fff3cd;
+    }
+    
+    .question-title {
+        font-size: 17px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+    
+    .option {
+        padding: 12px 15px;
+        margin: 10px 0;
+        border-radius: 6px;
+        background: white;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .option.selected {
+        background: #e3f2fd;
+        border-color: #2196F3;
+    }
+    
+    .option.correct-answer {
+        background: #c8e6c9;
+        border-color: #4caf50;
+        font-weight: 600;
+    }
+    
+    .option.wrong-answer {
+        background: #ffcdd2;
+        border-color: #f44336;
+    }
+    
+    .statement {
+        padding: 12px 15px;
+        margin: 10px 0;
+        border-radius: 6px;
+        background: white;
+        border: 2px solid #e0e0e0;
+    }
+    
+    .statement.correct {
+        background: #c8e6c9;
+        border-color: #4caf50;
+    }
+    
+    .statement.wrong {
+        background: #ffcdd2;
+        border-color: #f44336;
+    }
+    
+    .statement small {
+        display: block;
+        margin-top: 5px;
+        color: #555;
+    }
+    
+    .result-badge {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+    
+    .result-badge.correct {
+        background: #28a745;
+        color: white;
+    }
+    
+    .result-badge.wrong {
+        background: #dc3545;
+        color: white;
+    }
+    
+    .result-badge.partial {
+        background: #ffc107;
+        color: #333;
+    }
+    
+    .action-buttons {
+        text-align: center;
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 2px solid #e9ecef;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        margin: 5px;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .btn-secondary {
+        background: #6c757d;
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+    }
+    
+    .btn-secondary:hover {
+        background: #5a6268;
+        box-shadow: 0 6px 20px rgba(108, 117, 125, 0.6);
+    }
+    
+    .feedback-box {
+        background: #fff3cd;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #ffc107;
+        margin-top: 20px;
+    }
+    
+    .feedback-box h4 {
+        color: #856404;
+        margin-bottom: 15px;
+        font-size: 18px;
+    }
+    
+    .feedback-box p {
+        color: #856404;
+        line-height: 1.6;
+    }
+    
+    .section-title {
+        color: #667eea;
+        font-size: 22px;
+        font-weight: 600;
+        margin: 30px 0 20px 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e9ecef;
+    }
+    
+    .essay-image {
+        max-width: 100%;
+        margin-top: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    @media print {
+        .action-buttons {
+            display: none;
+        }
+        body {
+            background: white;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>{{ exam.title }}</h2>
+
+<div class="score-box">
+    <h2>{{ submission.score if submission.score is not none else '...' }}/10</h2>
+    <p>{{ 'Điểm của bạn' if session.exam_role == 'student' else 'Điểm của học sinh' }}</p>
+</div>
+
+<div class="info-box">
+    <p><strong>Học sinh:</strong> {{ submission.student }}</p>
+    <p><strong>Ngày nộp:</strong> {{ submission.submitted_at }}</p>
+    <p><strong>Loại đề:</strong> {{ 'Trắc nghiệm' if submission.type == 'multiple_choice' else 'Tự luận' }}</p>
+</div>
+
+{% if submission.type == 'multiple_choice' %}
+    <h3 class="section-title">Câu trả lời chi tiết</h3>
+    
+    <!-- Phần trắc nghiệm ABCD -->
+    <h4 style="color: #2c3e50; margin: 25px 0 15px 0;">Phần 1: Trắc nghiệm (60%)</h4>
+    {% for i in range(exam.questions.multiple_choice|length) %}
+        {% set question = exam.questions.multiple_choice[i] %}
+        {% set user_answer = submission.answers.get('mc_' ~ i) %}
+        {% set is_correct = (user_answer == question.answer) %}
+        
+        <div class="question-block {{ 'correct' if is_correct else 'wrong' }}">
+            <div class="question-title">
+                <span>Câu {{ i + 1 }}: {{ question.question }}</span>
+                <span class="result-badge {{ 'correct' if is_correct else 'wrong' }}">
+                    {{ 'Đúng ✓' if is_correct else 'Sai ✗' }}
+                </span>
+            </div>
+            
+            {% for option in question.options %}
+                {% set option_letter = option.split('.')[0] %}
+                {% set is_selected = (user_answer == option_letter) %}
+                {% set is_correct_option = (option_letter == question.answer) %}
+                
+                <div class="option 
+                    {% if is_selected and is_correct_option %}selected correct-answer
+                    {% elif is_selected %}selected wrong-answer
+                    {% elif is_correct_option %}correct-answer
+                    {% endif %}">
+                    {{ option }}
+                    {% if is_selected %}
+                        <strong style="color: #2196F3;"> ← Bạn chọn</strong>
+                    {% endif %}
+                    {% if is_correct_option and not is_selected %}
+                        <strong style="color: #4caf50;"> ← Đáp án đúng</strong>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    
+    <!-- Phần đúng sai -->
+    <h4 style="color: #2c3e50; margin: 35px 0 15px 0;">Phần 2: Đúng/Sai (40%)</h4>
+    {% for i in range(exam.questions.true_false|length) %}
+        {% set tf_question = exam.questions.true_false[i] %}
+        {% set user_answers = submission.answers.get('tf_' ~ i, []) %}
+        {% set wrong_count = 0 %}
+        {% for j in range(4) %}
+            {% if j < user_answers|length and user_answers[j] != tf_question.answers[j] %}
+                {% set wrong_count = wrong_count + 1 %}
+            {% endif %}
+        {% endfor %}
+        
+        {% if wrong_count == 0 %}
+            {% set status = 'correct' %}
+            {% set label = 'Hoàn toàn đúng ✓' %}
+        {% elif wrong_count == 1 %}
+            {% set status = 'partial' %}
+            {% set label = 'Sai 1/4 ý' %}
+        {% elif wrong_count == 2 %}
+            {% set status = 'partial' %}
+            {% set label = 'Sai 2/4 ý' %}
+        {% elif wrong_count == 3 %}
+            {% set status = 'partial' %}
+            {% set label = 'Sai 3/4 ý' %}
+        {% else %}
+            {% set status = 'wrong' %}
+            {% set label = 'Hoàn toàn sai ✗' %}
+        {% endif %}
+        
+        <div class="question-block {{ status }}">
+            <div class="question-title">
+                <span>Câu {{ i + 1 }}: {{ tf_question.question }}</span>
+                <span class="result-badge {{ status }}">{{ label }}</span>
+            </div>
+            
+            {% for j in range(tf_question.statements|length) %}
+                {% set statement = tf_question.statements[j] %}
+                {% set user_tf = user_answers[j] if j < user_answers|length else false %}
+                {% set correct_tf = tf_question.answers[j] %}
+                {% set is_correct = (user_tf == correct_tf) %}
+                
+                <div class="statement {{ 'correct' if is_correct else 'wrong' }}">
+                    <strong>{{ j + 1 }}.</strong> {{ statement }}
+                    <small>
+                        <strong>Bạn chọn:</strong> {{ 'Đúng' if user_tf else 'Sai' }} | 
+                        <strong>Đáp án:</strong> {{ 'Đúng' if correct_tf else 'Sai' }}
+                        <strong>{{ '✓' if is_correct else '✗' }}</strong>
+                    </small>
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    
+{% elif submission.type == 'essay' %}
+    <h3 class="section-title">Bài làm tự luận</h3>
+    
+    <div class="question-block">
+        <div class="question-title">
+            <span>Đề bài:</span>
+        </div>
+        <p style="line-height: 1.8;">{{ exam.essay_question }}</p>
+    </div>
+    
+    <div class="question-block">
+        <div class="question-title">
+            <span>Bài làm của {{ 'bạn' if session.exam_role == 'student' else 'học sinh' }}:</span>
+        </div>
+        <p style="line-height: 1.8; white-space: pre-wrap;">{{ submission.essay_answer }}</p>
+        
+        {% if submission.image_path %}
+            <div style="margin-top: 15px;">
+                <strong>Ảnh bài làm:</strong><br>
+                <img src="{{ url_for('static', filename='uploads/' + submission.image_path.split('/')[-1]) }}" 
+                     class="essay-image" alt="Ảnh bài làm">
+            </div>
+        {% endif %}
+    </div>
+    
+    {% if submission.graded %}
+        <div class="feedback-box">
+            <h4>📝 Nhận xét của giáo viên:</h4>
+            <p>{{ submission.feedback }}</p>
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            <strong>⏳ Thông báo:</strong> Bài làm của bạn đang chờ giáo viên chấm điểm
+        </div>
+    {% endif %}
+{% endif %}
+
+<div class="action-buttons">
+    <a href="{{ url_for('dashboard_student') if session.exam_role == 'student' else url_for('dashboard_teacher') }}" class="btn">
+        ← Quay lại Dashboard
+    </a>
+    <button onclick="window.print()" class="btn btn-secondary">
+        🖨️ In kết quả
+    </button>
+</div>
+{% endblock %}

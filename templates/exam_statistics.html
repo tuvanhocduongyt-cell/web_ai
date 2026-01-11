@@ -1,0 +1,94 @@
+<!-- templates/exam_statistics.html -->
+{% extends "layout.html" %}
+
+{% block title %}Thong ke hoc sinh{% endblock %}
+
+{% block content %}
+<h2>THONG KE KET QUA HOC SINH</h2>
+
+<p style="text-align: right; margin-bottom: 20px;">
+  <a href="{{ url_for('dashboard_teacher') }}">Quay lai trang quan ly</a>
+</p>
+
+{% if stats %}
+<div style="margin-bottom: 30px;">
+  <h3 style="color: #00796b;">TONG QUAN</h3>
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="background-color: #e0f2f1;">
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Ten hoc sinh</th>
+        <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">So bai da lam</th>
+        <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Tong so bai</th>
+        <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Ti le hoan thanh</th>
+        <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Diem trung binh</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for username, stat in stats.items() %}
+      <tr>
+        <td style="padding: 12px; border: 1px solid #ddd;">{{ stat.fullname }}</td>
+        <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">{{ stat.completed }}</td>
+        <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">{{ stat.total }}</td>
+        <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">
+          <strong style="color: {% if stat.completion_rate >= 80 %}#4caf50{% elif stat.completion_rate >= 50 %}#ff9800{% else %}#f44336{% endif %};">
+            {{ stat.completion_rate }}%
+          </strong>
+        </td>
+        <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">
+          <strong style="color: {% if stat.avg_score >= 8 %}#4caf50{% elif stat.avg_score >= 5 %}#ff9800{% else %}#f44336{% endif %};">
+            {{ stat.avg_score }}/10
+          </strong>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div>
+  <h3 style="color: #00796b;">CHI TIET TUNG HOC SINH</h3>
+  {% for username, stat in stats.items() %}
+  <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+    <h4 style="margin-top: 0; color: #00796b;">{{ stat.fullname }} ({{ username }})</h4>
+    
+    {% if stat.submissions %}
+    <table style="width: 100%; border-collapse: collapse; background-color: white;">
+      <thead>
+        <tr style="background-color: #e0f2f1;">
+          <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">De thi</th>
+          <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Loai</th>
+          <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Ngay nop</th>
+          <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Diem</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for submission in stat.submissions %}
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd;">De {{ submission.exam_id }}</td>
+          <td style="padding: 10px; text-align: center; border: 1px solid #ddd;">
+            {% if submission.type == 'multiple_choice' %}Trac nghiem{% else %}Tu luan{% endif %}
+          </td>
+          <td style="padding: 10px; text-align: center; border: 1px solid #ddd;">{{ submission.submitted_at }}</td>
+          <td style="padding: 10px; text-align: center; border: 1px solid #ddd;">
+            {% if submission.score is not none %}
+            <strong style="color: {% if submission.score >= 8 %}#4caf50{% elif submission.score >= 5 %}#ff9800{% else %}#f44336{% endif %};">
+              {{ submission.score }}/10
+            </strong>
+            {% else %}
+            <span style="color: #ff9800;">Chua cham</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p style="color: #666; margin: 10px 0;">Hoc sinh chua lam bai thi nao.</p>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p style="color: #666; text-align: center; margin-top: 50px;">Chua co du lieu thong ke.</p>
+{% endif %}
+{% endblock %}

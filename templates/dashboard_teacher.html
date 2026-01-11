@@ -1,0 +1,186 @@
+<!-- templates/dashboard_teacher.html -->
+{% extends "layout.html" %}
+
+{% block title %}Trang giao vien{% endblock %}
+
+{% block content %}
+<h2>TRANG GIAO VIEN</h2>
+
+<p style="text-align: right; margin-bottom: 20px;">
+  Xin chao, <strong>{{ session['exam_username'] }}</strong> | 
+  <a href="{{ url_for('logout_exam') }}">Dang xuat</a>
+</p>
+
+<div style="margin-bottom: 30px;">
+  <h3 style="color: #00796b;">QUAN LY</h3>
+  <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+    <a href="{{ url_for('create_exam') }}" style="display: inline-block; padding: 12px 24px; background-color: #009688; color: white; border-radius: 8px; text-decoration: none;">Tao de thi moi</a>
+    <a href="{{ url_for('exam_statistics') }}" style="display: inline-block; padding: 12px 24px; background-color: #0288d1; color: white; border-radius: 8px; text-decoration: none;">Thong ke hoc sinh</a>
+    <button onclick="document.getElementById('uploadMaterialForm').style.display='block'" style="padding: 12px 24px; background-color: #f57c00;">Dang tai lieu</button>
+  </div>
+</div>
+
+<div id="uploadMaterialForm" style="display: none; background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+  <h4 style="margin-top: 0;">Dang tai lieu bai giang</h4>
+  <form method="POST" action="{{ url_for('upload_material') }}" enctype="multipart/form-data">
+    <div style="margin-bottom: 15px;">
+      <label style="display: block; margin-bottom: 5px; font-weight: 600;">Tieu de:</label>
+      <input type="text" name="title" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+    </div>
+    <div style="margin-bottom: 15px;">
+      <label style="display: block; margin-bottom: 5px; font-weight: 600;">Mo ta:</label>
+      <textarea name="description" rows="3" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;"></textarea>
+    </div>
+    <div style="margin-bottom: 15px;">
+      <label style="display: block; margin-bottom: 5px; font-weight: 600;">File tai lieu:</label>
+      <input type="file" name="material_file" required style="width: 100%;">
+    </div>
+    <button type="submit" style="background-color: #009688;">Tai len</button>
+    <button type="button" onclick="document.getElementById('uploadMaterialForm').style.display='none'" style="background-color: #757575; margin-left: 10px;">Huy</button>
+  </form>
+</div>
+
+<div style="margin-bottom: 30px;">
+  <h3 style="color: #00796b;">DANH SACH DE THI</h3>
+  {% if exams %}
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="background-color: #e0f2f1;">
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Tieu de</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Loai</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thoi gian</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Ngay tao</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thao tac</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for exam_id, exam in exams.items() %}
+      <tr>
+        <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.title }}</td>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          {% if exam.type == 'multiple_choice' %}Trac nghiem{% else %}Tu luan{% endif %}
+        </td>
+        <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.duration }} phut</td>
+        <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.created_at }}</td>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          <button onclick="viewExam('{{ exam_id }}')" style="padding: 6px 12px; font-size: 14px; background-color: #0288d1;">Xem de</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color: #666;">Chua co de thi nao.</p>
+  {% endif %}
+</div>
+
+<div id="examDetailModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; overflow-y: auto;">
+  <div style="background: white; max-width: 800px; margin: 50px auto; padding: 30px; border-radius: 12px; position: relative;">
+    <button onclick="closeExamDetail()" style="position: absolute; top: 15px; right: 15px; background: #f44336; padding: 8px 16px;">Dong</button>
+    <div id="examDetailContent"></div>
+  </div>
+</div>
+
+<div style="margin-bottom: 30px;">
+  <h3 style="color: #00796b;">BAI NOP CAN CHAM</h3>
+  {% set essay_submissions = submissions|selectattr('type', 'equalto', 'essay')|selectattr('graded', 'equalto', False)|list %}
+  {% if essay_submissions %}
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="background-color: #e0f2f1;">
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Hoc sinh</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">De thi</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Ngay nop</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thao tac</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for submission in essay_submissions %}
+      <tr>
+        <td style="padding: 12px; border: 1px solid #ddd;">{{ submission.student }}</td>
+        <td style="padding: 12px; border: 1px solid #ddd;">{{ exams[submission.exam_id].title }}</td>
+        <td style="padding: 12px; border: 1px solid #ddd;">{{ submission.submitted_at }}</td>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          <form method="POST" action="{{ url_for('grade_essay', submission_index=loop.index0) }}" style="display: inline;">
+            <button type="submit" style="padding: 6px 12px; font-size: 14px; background-color: #f57c00;">Cham diem</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color: #666;">Khong co bai nop can cham.</p>
+  {% endif %}
+</div>
+
+<div>
+  <h3 style="color: #00796b;">TAI LIEU DA DANG</h3>
+  {% if materials %}
+  <ul style="list-style: none; padding: 0;">
+    {% for material in materials %}
+    <li style="padding: 10px; border-bottom: 1px solid #eee;">
+      <strong>{{ material.title }}</strong><br>
+      <span style="color: #666; font-size: 14px;">{{ material.description }}</span><br>
+      <span style="color: #999; font-size: 13px;">Dang boi: {{ material.uploaded_by }} - {{ material.uploaded_at }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p style="color: #666;">Chua co tai lieu nao.</p>
+  {% endif %}
+</div>
+
+<script>
+var examsData = {{ exams|tojson }};
+
+function viewExam(examId) {
+  var exam = examsData[examId];
+  var content = '<h2 style="color: #00796b;">' + exam.title + '</h2>';
+  content += '<p><strong>Loai:</strong> ' + (exam.type === 'multiple_choice' ? 'Trac nghiem' : 'Tu luan') + '</p>';
+  content += '<p><strong>Thoi gian:</strong> ' + exam.duration + ' phut</p>';
+  content += '<p><strong>Tong diem:</strong> ' + exam.total_score + ' diem</p>';
+  content += '<hr style="margin: 20px 0;">';
+  
+  if (exam.type === 'multiple_choice') {
+    content += '<h3>PHAN TRAC NGHIEM</h3>';
+    exam.questions.multiple_choice.forEach(function(q, i) {
+      content += '<div style="background: #f5f5f5; padding: 15px; margin-bottom: 15px; border-radius: 8px;">';
+      content += '<p><strong>Cau ' + (i+1) + ':</strong> ' + q.question + '</p>';
+      q.options.forEach(function(opt) {
+        var isCorrect = opt[0] === q.answer;
+        content += '<p style="margin-left: 20px; ' + (isCorrect ? 'color: green; font-weight: bold;' : '') + '">' + opt + (isCorrect ? ' (Dap an dung)' : '') + '</p>';
+      });
+      content += '</div>';
+    });
+    
+    content += '<h3>PHAN DUNG/SAI</h3>';
+    exam.questions.true_false.forEach(function(tf, i) {
+      content += '<div style="background: #f5f5f5; padding: 15px; margin-bottom: 15px; border-radius: 8px;">';
+      content += '<p><strong>Cau ' + (i + exam.questions.multiple_choice.length + 1) + ':</strong> ' + tf.question + '</p>';
+      tf.statements.forEach(function(stmt, j) {
+        var isTrue = tf.answers[j];
+        content += '<p style="margin-left: 20px;"><strong>' + (j+1) + '.</strong> ' + stmt + ' - <span style="color: ' + (isTrue ? 'green' : 'red') + '; font-weight: bold;">' + (isTrue ? 'DUNG' : 'SAI') + '</span></p>';
+      });
+      content += '</div>';
+    });
+  } else {
+    content += '<h3>CAU HOI TU LUAN</h3>';
+    content += '<div style="background: #f5f5f5; padding: 15px; border-radius: 8px;">';
+    content += '<p>' + exam.essay_question + '</p>';
+    content += '</div>';
+    content += '<h3 style="margin-top: 20px;">TIEU CHI CHAM DIEM</h3>';
+    content += '<div style="background: #f5f5f5; padding: 15px; border-radius: 8px;">';
+    content += '<pre style="white-space: pre-wrap;">' + exam.grading_criteria + '</pre>';
+    content += '</div>';
+  }
+  
+  document.getElementById('examDetailContent').innerHTML = content;
+  document.getElementById('examDetailModal').style.display = 'block';
+}
+
+function closeExamDetail() {
+  document.getElementById('examDetailModal').style.display = 'none';
+}
+</script>
+{% endblock %}

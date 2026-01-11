@@ -1,0 +1,177 @@
+{
+  "20260111163814": {
+    "id": "20260111163814",
+    "title": "lịch sử lớp 11",
+    "type": "multiple_choice",
+    "duration": 15,
+    "created_by": "gv001",
+    "created_at": "2026-01-11 16:38:31",
+    "questions": {
+      "multiple_choice": [
+        {
+          "question": "Nhà Trần được thành lập vào năm nào?",
+          "options": [
+            "A. 1209",
+            "B. 1215",
+            "C. 1225",
+            "D. 1230"
+          ],
+          "answer": "C"
+        },
+        {
+          "question": "Người được lập làm vua đầu tiên của nhà Trần là",
+          "options": [
+            "A. Trần Thủ Độ",
+            "B. Trần Quốc Tuấn",
+            "C. Trần Cảnh",
+            "D. Trần Liễu"
+          ],
+          "answer": "C"
+        },
+        {
+          "question": "Kinh đô của nhà Trần được đặt tại",
+          "options": [
+            "A. Hoa Lư",
+            "B. Thăng Long",
+            "C. Tây Đô",
+            "D. Phú Xuân"
+          ],
+          "answer": "B"
+        },
+        {
+          "question": "Chính quyền nhà Trần được tổ chức theo chế độ",
+          "options": [
+            "A. Quân chủ chuyên chế trung ương tập quyền",
+            "B. Phong kiến phân quyền",
+            "C. Cộng hòa quý tộc",
+            "D. Quân chủ lập hiến"
+          ],
+          "answer": "A"
+        },
+        {
+          "question": "Quân xâm lược Mông – Nguyên tiến hành xâm lược nước ta lần thứ nhất vào năm",
+          "options": [
+            "A. 1258",
+            "B. 1279",
+            "C. 1285",
+            "D. 1288"
+          ],
+          "answer": "A"
+        },
+        {
+          "question": "Tổng chỉ huy quân đội nhà Trần trong kháng chiến chống Mông – Nguyên là",
+          "options": [
+            "A. Trần Thái Tông",
+            "B. Trần Thánh Tông",
+            "C. Trần Quốc Tuấn",
+            "D. Trần Nhật Duật"
+          ],
+          "answer": "C"
+        },
+        {
+          "question": "Chiến thắng nào sau đây quyết định thắng lợi cuộc kháng chiến chống Mông – Nguyên lần thứ ba?",
+          "options": [
+            "A. Đông Bộ Đầu",
+            "B. Chương Dương",
+            "C. Hàm Tử",
+            "D. Bạch Đằng"
+          ],
+          "answer": "D"
+        },
+        {
+          "question": "Chính sách “ngụ binh ư nông” của nhà Trần có nội dung là",
+          "options": [
+            "A. Quân lính chỉ sản xuất nông nghiệp",
+            "B. Quân đội vừa sản xuất vừa sẵn sàng chiến đấu",
+            "C. Tất cả dân đều phải đi lính",
+            "D. Bỏ quân đội thường trực"
+          ],
+          "answer": "B"
+        },
+        {
+          "question": "Tôn giáo giữ vai trò quan trọng trong đời sống tinh thần thời Trần là",
+          "options": [
+            "A. Nho giáo",
+            "B. Phật giáo",
+            "C. Đạo giáo",
+            "D. Thiên Chúa giáo"
+          ],
+          "answer": "B"
+        },
+        {
+          "question": "Nguyên nhân chủ yếu dẫn đến sự suy yếu của nhà Trần vào cuối thế kỉ XIV là",
+          "options": [
+            "A. Sự xâm lược của quân Minh",
+            "B. Kinh tế phát triển quá nhanh",
+            "C. Nội bộ triều đình suy thoái",
+            "D. Thiếu nhân tài"
+          ],
+          "answer": "C"
+        }
+      ],
+      "true_false": [
+        {
+          "question": "Về sự thành lập nhà Trần",
+          "statements": [
+            "Nhà Trần được thành lập sau khi nhà Lý suy yếu.",
+            "Trần Thủ Độ đóng vai trò quan trọng trong việc lập ra nhà Trần.",
+            "Nhà Trần lên ngôi bằng con đường khởi nghĩa vũ trang.",
+            "Trần Cảnh là vị vua đầu tiên của nhà Trần."
+          ],
+          "answers": [
+            true,
+            true,
+            false,
+            true
+          ]
+        },
+        {
+          "question": "Về bộ máy nhà nước thời Trần",
+          "statements": [
+            "Nhà Trần tổ chức bộ máy nhà nước từ trung ương đến địa phương.",
+            "Các vua Trần thường nhường ngôi sớm cho con.",
+            "Nhà Trần không duy trì quân đội thường trực.",
+            "Chế độ thái thượng hoàng là nét đặc trưng của triều Trần."
+          ],
+          "answers": [
+            true,
+            true,
+            false,
+            true
+          ]
+        },
+        {
+          "question": "Về kháng chiến chống Mông – Nguyên",
+          "statements": [
+            "Nhà Trần đã ba lần kháng chiến chống quân Mông – Nguyên.",
+            "Trần Quốc Tuấn là tổng chỉ huy quân đội trong các cuộc kháng chiến.",
+            "Nhà Trần luôn chủ trương “đánh nhanh thắng nhanh”.",
+            "Chiến thắng Bạch Đằng năm 1288 đã tiêu diệt hoàn toàn đạo quân xâm lược."
+          ],
+          "answers": [
+            true,
+            true,
+            false,
+            false
+          ]
+        },
+        {
+          "question": "Về tình hình kinh tế – xã hội thời Trần",
+          "statements": [
+            "Nông nghiệp giữ vai trò quan trọng trong nền kinh tế.",
+            "Nhà Trần chú trọng khai hoang, mở rộng ruộng đất.",
+            "Cuối thời Trần, đời sống nhân dân ngày càng ổn định.",
+            "Sự phát triển của điền trang, thái ấp làm xã hội phân hóa sâu sắc."
+          ],
+          "answers": [
+            true,
+            true,
+            false,
+            true
+          ]
+        }
+      ]
+    },
+    "total_score": 10
+  }
+}

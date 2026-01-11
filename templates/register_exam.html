@@ -1,0 +1,39 @@
+<!-- templates/register_exam.html -->
+{% extends "layout.html" %}
+
+{% block title %}Dang ky - On luyen lich su{% endblock %}
+
+{% block content %}
+<h2>DANG KY TAI KHOAN HOC SINH</h2>
+
+{% if message %}
+<p style="color: red; text-align: center;">{{ message }}</p>
+{% endif %}
+
+<form method="POST">
+  <div style="margin-bottom: 20px;">
+    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Ho va ten:</label>
+    <input type="text" name="fullname" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Ten dang nhap:</label>
+    <input type="text" name="username" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Mat khau:</label>
+    <input type="password" name="password" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
+  </div>
+
+  <button type="submit" style="width: 100%; margin-top: 10px;">Dang ky</button>
+</form>
+
+<p style="text-align: center; margin-top: 20px;">
+  Da co tai khoan? <a href="{{ url_for('login_exam') }}">Dang nhap ngay</a>
+</p>
+
+<p style="text-align: center; margin-top: 10px;">
+  <a href="{{ url_for('menu') }}">Quay lai trang chu</a>
+</p>
+{% endblock %}

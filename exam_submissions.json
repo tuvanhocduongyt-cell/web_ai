@@ -1,0 +1,45 @@
+[
+  {
+    "exam_id": "20260111163814",
+    "student": "hs001",
+    "submitted_at": "2026-01-11 16:57:30",
+    "answers": {
+      "mc_0": "A",
+      "mc_1": "A",
+      "mc_2": "A",
+      "mc_3": "A",
+      "mc_4": "A",
+      "mc_5": "A",
+      "mc_6": "A",
+      "mc_7": "D",
+      "mc_8": "A",
+      "mc_9": "C",
+      "tf_0": [
+        false,
+        true,
+        true,
+        false
+      ],
+      "tf_1": [
+        true,
+        false,
+        true,
+        false
+      ],
+      "tf_2": [
+        true,
+        false,
+        true,
+        true
+      ],
+      "tf_3": [
+        false,
+        true,
+        false,
+        true
+      ]
+    },
+    "score": 2.6,
+    "type": "multiple_choice"
+  }
+]

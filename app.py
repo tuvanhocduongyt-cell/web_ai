@@ -26,6 +26,9 @@ from utils.ocr import extract_text_from_image
 from utils.gemini_api import analyze_text_with_gemini
 from datetime import datetime, timezone
 
+from docx import Document
+import mammoth
+
 datetime.now(timezone.utc)
 
 app = Flask(__name__)
@@ -1243,7 +1246,522 @@ def dich_vu():
     ]
     
     return render_template('dichvu.html', co_so_y_te=co_so_y_te)
+######
+# Thêm vào sau phần load_dotenv()
+EXAM_TEACHERS_FILE = 'teachers_exam.json'
+EXAM_STUDENTS_FILE = 'students_exam.json'
+EXAMS_DATA_FILE = 'exams_data.json'
+EXAM_SUBMISSIONS_FILE = 'exam_submissions.json'
+MATERIALS_DATA_FILE = 'materials_data.json'
 
+# Các hàm helper cho exam system
+def load_exam_teachers():
+    if not os.path.exists(EXAM_TEACHERS_FILE):
+        return {}
+    with open(EXAM_TEACHERS_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def save_exam_teachers(data):
+    with open(EXAM_TEACHERS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def load_exam_students():
+    if not os.path.exists(EXAM_STUDENTS_FILE):
+        return {}
+    with open(EXAM_STUDENTS_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def save_exam_students(data):
+    with open(EXAM_STUDENTS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def load_exams_data():
+    if not os.path.exists(EXAMS_DATA_FILE):
+        return {}
+    with open(EXAMS_DATA_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def save_exams_data(data):
+    with open(EXAMS_DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def load_exam_submissions():
+    if not os.path.exists(EXAM_SUBMISSIONS_FILE):
+        return []
+    with open(EXAM_SUBMISSIONS_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def save_exam_submissions(data):
+    with open(EXAM_SUBMISSIONS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def load_materials_data():
+    if not os.path.exists(MATERIALS_DATA_FILE):
+        return []
+    with open(MATERIALS_DATA_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def save_materials_data(data):
+    with open(MATERIALS_DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def read_word_file(file_path):
+    try:
+        with open(file_path, "rb") as docx_file:
+            result = mammoth.extract_raw_text(docx_file)
+            return result.value
+    except Exception as e:
+        print(f"Loi doc file Word: {e}")
+        return ""
+
+def generate_exam_from_text(text_content, num_multiple, num_truefalse):
+    prompt = f"""
+Du lieu tu file Word:
+{text_content[:3000]}
+
+Hay tao de thi lich su voi:
+- {num_multiple} cau trac nghiem ABCD
+- {num_truefalse} cau dung sai (moi cau co 4 y)
+
+Tra ve JSON voi format:
+{{
+  "multiple_choice": [
+    {{
+      "question": "Cau hoi",
+      "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
+      "answer": "A"
+    }}
+  ],
+  "true_false": [
+    {{
+      "question": "Cau hoi chinh",
+      "statements": ["Y a", "Y b", "Y c", "Y d"],
+      "answers": [true, false, true, false]
+    }}
+  ]
+}}
+
+Chi tra ve JSON, khong co gi khac.
+"""
+    
+    try:
+        response = model.generate_content(prompt)
+        text = response.text.strip()
+        text = text.replace('```json', '').replace('```', '').strip()
+        return json.loads(text)
+    except Exception as e:
+        print(f"Loi tao de AI: {e}")
+        return None
+
+# Routes cho exam system
+
+@app.route('/login_exam', methods=['GET', 'POST'])
+def login_exam():
+    if request.method == 'POST':
+        username = request.form.get('username').strip()
+        password = request.form.get('password').strip()
+        role = request.form.get('role')
+        
+        if role == 'teacher':
+            teachers = load_exam_teachers()
+            if username in teachers and teachers[username]['password'] == password:
+                session['exam_username'] = username
+                session['exam_role'] = 'teacher'
+                return redirect(url_for('dashboard_teacher'))
+            else:
+                return render_template('login_exam.html', message="Sai ten dang nhap hoac mat khau")
+        else:
+            students = load_exam_students()
+            if username in students and students[username]['password'] == password:
+                session['exam_username'] = username
+                session['exam_role'] = 'student'
+                return redirect(url_for('dashboard_student'))
+            else:
+                return render_template('login_exam.html', message="Sai ten dang nhap hoac mat khau")
+    
+    return render_template('login_exam.html')
+
+@app.route('/register_exam', methods=['GET', 'POST'])
+def register_exam():
+    if request.method == 'POST':
+        username = request.form.get('username').strip()
+        password = request.form.get('password').strip()
+        fullname = request.form.get('fullname').strip()
+        
+        students = load_exam_students()
+        
+        if username in students:
+            return render_template('register_exam.html', message="Ten dang nhap da ton tai")
+        
+        students[username] = {
+            "password": password,
+            "fullname": fullname,
+            "created_at": datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S")
+        }
+        save_exam_students(students)
+        return redirect(url_for('login_exam'))
+    
+    return render_template('register_exam.html')
+
+@app.route('/dashboard_teacher')
+def dashboard_teacher():
+    if 'exam_username' not in session or session.get('exam_role') != 'teacher':
+        return redirect(url_for('login_exam'))
+    
+    exams = load_exams_data()
+    materials = load_materials_data()
+    submissions = load_exam_submissions()
+    
+    return render_template('dashboard_teacher.html', 
+                         exams=exams, 
+                         materials=materials,
+                         submissions=submissions)
+
+@app.route('/dashboard_student')
+def dashboard_student():
+    if 'exam_username' not in session or session.get('exam_role') != 'student':
+        return redirect(url_for('login_exam'))
+    
+    username = session['exam_username']
+    exams = load_exams_data()
+    materials = load_materials_data()
+    submissions = load_exam_submissions()
+    
+    my_submissions = [s for s in submissions if s['student'] == username]
+    
+    return render_template('dashboard_student.html', 
+                         exams=exams, 
+                         materials=materials,
+                         my_submissions=my_submissions)
+
+@app.route('/create_exam', methods=['GET', 'POST'])
+def create_exam():
+    if 'exam_username' not in session or session.get('exam_role') != 'teacher':
+        return redirect(url_for('login_exam'))
+    
+    if request.method == 'POST':
+        exam_type = request.form.get('exam_type')
+        
+        if exam_type == 'multiple_choice':
+            exam_id = datetime.now(vn_timezone).strftime("%Y%m%d%H%M%S")
+            
+            word_file = request.files.get('word_file')
+            if word_file and word_file.filename.endswith('.docx'):
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], word_file.filename)
+                word_file.save(file_path)
+                
+                text_content = read_word_file(file_path)
+                
+                num_multiple = int(request.form.get('num_multiple', 10))
+                num_truefalse = int(request.form.get('num_truefalse', 5))
+                
+                exam_data = generate_exam_from_text(text_content, num_multiple, num_truefalse)
+                
+                if exam_data:
+                    exams = load_exams_data()
+                    exams[exam_id] = {
+                        'id': exam_id,
+                        'title': request.form.get('title'),
+                        'type': 'multiple_choice',
+                        'duration': int(request.form.get('duration', 60)),
+                        'created_by': session['exam_username'],
+                        'created_at': datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S"),
+                        'questions': exam_data,
+                        'total_score': 10
+                    }
+                    save_exams_data(exams)
+                    return redirect(url_for('dashboard_teacher'))
+            
+        elif exam_type == 'essay':
+            exam_id = datetime.now(vn_timezone).strftime("%Y%m%d%H%M%S")
+            
+            exams = load_exams_data()
+            exams[exam_id] = {
+                'id': exam_id,
+                'title': request.form.get('title'),
+                'type': 'essay',
+                'duration': int(request.form.get('duration', 90)),
+                'created_by': session['exam_username'],
+                'created_at': datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S"),
+                'essay_question': request.form.get('essay_question'),
+                'grading_criteria': request.form.get('grading_criteria'),
+                'total_score': 10
+            }
+            save_exams_data(exams)
+            return redirect(url_for('dashboard_teacher'))
+    
+    return render_template('create_exam.html')
+##############
+@app.route('/do_exam/<exam_id>', methods=['GET', 'POST'])
+def do_exam(exam_id):
+    if 'exam_username' not in session or session.get('exam_role') != 'student':
+        return redirect(url_for('login_exam'))
+    
+    exams = load_exams_data()
+    exam = exams.get(exam_id)
+    
+    if not exam:
+        return "Khong tim thay de thi", 404
+    
+    if request.method == 'POST':
+        username = session['exam_username']
+        submissions = load_exam_submissions()
+        
+        # ✅ THÊM DÒNG NÀY ĐỂ ĐẢM BẢO submissions LÀ LIST
+        if not isinstance(submissions, list):
+            submissions = []
+        
+        if exam['type'] == 'multiple_choice':
+            score = 0
+            total_questions = len(exam['questions']['multiple_choice']) + len(exam['questions']['true_false'])
+            
+            score_per_mc = (10 * 0.6) / len(exam['questions']['multiple_choice']) if len(exam['questions']['multiple_choice']) > 0 else 0
+            score_per_tf = (10 * 0.4) / len(exam['questions']['true_false']) if len(exam['questions']['true_false']) > 0 else 0
+            
+            answers = {}
+            
+            for i, q in enumerate(exam['questions']['multiple_choice']):
+                user_answer = request.form.get(f'mc_{i}')
+                answers[f'mc_{i}'] = user_answer
+                if user_answer == q['answer']:
+                    score += score_per_mc
+            
+            for i, tf in enumerate(exam['questions']['true_false']):
+                user_answers = []
+                wrong_count = 0
+                for j in range(4):
+                    user_tf = request.form.get(f'tf_{i}_{j}') == 'true'
+                    user_answers.append(user_tf)
+                    if user_tf != tf['answers'][j]:
+                        wrong_count += 1
+                
+                answers[f'tf_{i}'] = user_answers
+                
+                if wrong_count == 0:
+                    score += score_per_tf
+                elif wrong_count == 1:
+                    score += score_per_tf - 0.5
+                elif wrong_count == 2:
+                    score += 0.25
+                elif wrong_count == 3:
+                    score += 0.1
+            
+            submission = {
+                'exam_id': exam_id,
+                'student': username,
+                'submitted_at': datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S"),
+                'answers': answers,
+                'score': round(score, 2),
+                'type': 'multiple_choice'
+            }
+            
+        elif exam['type'] == 'essay':
+            essay_answer = request.form.get('essay_answer', '').strip()
+            image_file = request.files.get('essay_image')
+            
+            image_path = None
+            if image_file and image_file.filename:
+                image_filename = secure_filename(image_file.filename)
+                image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
+                image_file.save(image_path)
+            
+            submission = {
+                'exam_id': exam_id,
+                'student': username,
+                'submitted_at': datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S"),
+                'essay_answer': essay_answer,
+                'image_path': image_path,
+                'score': None,
+                'type': 'essay',
+                'graded': False
+            }
+        
+        submissions.append(submission)
+        save_exam_submissions(submissions)
+        
+        return redirect(url_for('dashboard_student'))
+    
+    return render_template('do_exam.html', exam=exam, exam_id=exam_id)
+
+@app.route('/grade_essay/<int:submission_index>', methods=['POST'])
+def grade_essay(submission_index):
+    if 'exam_username' not in session or session.get('exam_role') != 'teacher':
+        return redirect(url_for('login_exam'))
+    
+    submissions = load_exam_submissions()
+    
+    if submission_index >= len(submissions):
+        return "Khong tim thay bai nop", 404
+    
+    submission = submissions[submission_index]
+    
+    if submission['type'] != 'essay':
+        return "Khong phai bai tu luan", 400
+    
+    exams = load_exams_data()
+    exam = exams.get(submission['exam_id'])
+    
+    if submission.get('image_path'):
+        try:
+            img = Image.open(submission['image_path'])
+            
+            prompt = f"""
+De bai: {exam['essay_question']}
+
+Tieu chi cham: {exam['grading_criteria']}
+
+Hay cham diem bai lam cua hoc sinh trong anh theo thang diem 10.
+Tra ve JSON:
+{{
+  "score": <diem so>,
+  "feedback": "<nhan xet chi tiet>"
+}}
+Chi tra ve JSON.
+"""
+            response = model.generate_content([img, prompt])
+            text = response.text.strip()
+            text = text.replace('```json', '').replace('```', '').strip()
+            result = json.loads(text)
+            
+            submissions[submission_index]['score'] = result['score']
+            submissions[submission_index]['feedback'] = result['feedback']
+            submissions[submission_index]['graded'] = True
+            
+        except Exception as e:
+            print(f"Loi cham bai: {e}")
+            return "Loi cham bai", 500
+    else:
+        prompt = f"""
+De bai: {exam['essay_question']}
+
+Tieu chi cham: {exam['grading_criteria']}
+
+Bai lam cua hoc sinh: {submission['essay_answer']}
+
+Hay cham diem theo thang diem 10.
+Tra ve JSON:
+{{
+  "score": <diem so>,
+  "feedback": "<nhan xet chi tiet>"
+}}
+Chi tra ve JSON.
+"""
+        try:
+            response = model.generate_content(prompt)
+            text = response.text.strip()
+            text = text.replace('```json', '').replace('```', '').strip()
+            result = json.loads(text)
+            
+            submissions[submission_index]['score'] = result['score']
+            submissions[submission_index]['feedback'] = result['feedback']
+            submissions[submission_index]['graded'] = True
+            
+        except Exception as e:
+            print(f"Loi cham bai: {e}")
+            return "Loi cham bai", 500
+    
+    save_exam_submissions(submissions)
+    return redirect(url_for('dashboard_teacher'))
+
+@app.route('/upload_material', methods=['POST'])
+def upload_material():
+    if 'exam_username' not in session or session.get('exam_role') != 'teacher':
+        return redirect(url_for('login_exam'))
+    
+    title = request.form.get('title')
+    description = request.form.get('description')
+    file = request.files.get('material_file')
+    
+    if file and file.filename:
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+        
+        materials = load_materials_data()
+        materials.append({
+            'title': title,
+            'description': description,
+            'filename': filename,
+            'uploaded_by': session['exam_username'],
+            'uploaded_at': datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S")
+        })
+        save_materials_data(materials)
+    
+    return redirect(url_for('dashboard_teacher'))
+
+@app.route('/download_material/<filename>')
+def download_material(filename):
+    if 'exam_username' not in session:
+        return redirect(url_for('login_exam'))
+    
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename, as_attachment=True)
+
+@app.route('/exam_statistics')
+def exam_statistics():
+    if 'exam_username' not in session or session.get('exam_role') != 'teacher':
+        return redirect(url_for('login_exam'))
+    
+    submissions = load_exam_submissions()
+    students = load_exam_students()
+    exams = load_exams_data()
+    
+    stats = {}
+    for student_username in students.keys():
+        student_submissions = [s for s in submissions if s['student'] == student_username]
+        
+        total_exams = len(exams)
+        completed_exams = len(student_submissions)
+        completion_rate = (completed_exams / total_exams * 100) if total_exams > 0 else 0
+        
+        scores = [s['score'] for s in student_submissions if s['score'] is not None]
+        avg_score = sum(scores) / len(scores) if scores else 0
+        
+        stats[student_username] = {
+            'fullname': students[student_username]['fullname'],
+            'completed': completed_exams,
+            'total': total_exams,
+            'completion_rate': round(completion_rate, 1),
+            'avg_score': round(avg_score, 2),
+            'submissions': student_submissions
+        }
+    
+    return render_template('exam_statistics.html', stats=stats)
+
+############
+@app.route('/view_submission/<int:submission_index>')
+def view_submission(submission_index):
+    if 'exam_username' not in session:
+        return redirect(url_for('login_exam'))
+    
+    submissions = load_exam_submissions()
+    
+    if submission_index >= len(submissions):
+        return "Khong tim thay bai nop", 404
+    
+    submission = submissions[submission_index]
+    
+    # Kiểm tra quyền xem (chỉ học sinh của bài hoặc giáo viên)
+    if session.get('exam_role') == 'student' and submission['student'] != session['exam_username']:
+        return "Ban khong co quyen xem bai nay", 403
+    
+    exams = load_exams_data()
+    exam = exams.get(submission['exam_id'])
+    
+    if not exam:
+        return "Khong tim thay de thi", 404
+    
+    return render_template('view_submission.html', 
+                         submission=submission, 
+                         exam=exam,
+                         submission_index=submission_index)
+##########################
+
+@app.route('/logout_exam')
+def logout_exam():
+    session.pop('exam_username', None)
+    session.pop('exam_role', None)
+    return redirect(url_for('login_exam'))
+#####
 
 if __name__ == '__main__':
     app.run(debug=True, threaded=True)

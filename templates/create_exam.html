@@ -1,0 +1,102 @@
+<!-- templates/create_exam.html -->
+{% extends "layout.html" %}
+
+{% block title %}Tao de thi{% endblock %}
+
+{% block content %}
+<h2>TAO DE THI MOI</h2>
+
+<div style="margin-bottom: 30px;">
+  <label style="display: block; margin-bottom: 10px; font-weight: 600;">Chon loai de thi:</label>
+  <select id="examTypeSelect" onchange="showExamForm()" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
+    <option value="">-- Chon loai --</option>
+    <option value="multiple_choice">Trac nghiem (ABCD + Dung/Sai)</option>
+    <option value="essay">Tu luan</option>
+  </select>
+</div>
+
+<div id="multipleChoiceForm" style="display: none;">
+  <h3 style="color: #00796b;">TAO DE TRAC NGHIEM</h3>
+  <form method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="exam_type" value="multiple_choice">
+    
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Tieu de de thi:</label>
+      <input type="text" name="title" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Thoi gian lam bai (phut):</label>
+      <input type="number" name="duration" value="60" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">So cau trac nghiem ABCD:</label>
+      <input type="number" name="num_multiple" value="10" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">So cau Dung/Sai (moi cau 4 y):</label>
+      <input type="number" name="num_truefalse" value="5" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Upload file Word (AI se tu dong tao de):</label>
+      <input type="file" name="word_file" accept=".docx" required style="width: 100%;">
+      <small style="color: #666;">Chi chap nhan file .docx</small>
+    </div>
+
+    <button type="submit" style="width: 100%;">Tao de thi</button>
+  </form>
+</div>
+
+<div id="essayForm" style="display: none;">
+  <h3 style="color: #00796b;">TAO DE TU LUAN</h3>
+  <form method="POST">
+    <input type="hidden" name="exam_type" value="essay">
+    
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Tieu de de thi:</label>
+      <input type="text" name="title" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Thoi gian lam bai (phut):</label>
+      <input type="number" name="duration" value="90" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Cau hoi tu luan:</label>
+      <textarea name="essay_question" rows="5" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;"></textarea>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Tieu chi cham diem:</label>
+      <textarea name="grading_criteria" rows="8" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;" placeholder="Vi du:
+- Y 1 (2 diem): Neu duoc ...
+- Y 2 (3 diem): Phan tich ...
+- Y 3 (5 diem): Nhan xet ..."></textarea>
+    </div>
+
+    <button type="submit" style="width: 100%;">Tao de thi</button>
+  </form>
+</div>
+
+<p style="text-align: center; margin-top: 30px;">
+  <a href="{{ url_for('dashboard_teacher') }}">Quay lai trang quan ly</a>
+</p>
+
+<script>
+function showExamForm() {
+  var examType = document.getElementById('examTypeSelect').value;
+  document.getElementById('multipleChoiceForm').style.display = 'none';
+  document.getElementById('essayForm').style.display = 'none';
+  
+  if (examType === 'multiple_choice') {
+    document.getElementById('multipleChoiceForm').style.display = 'block';
+  } else if (examType === 'essay') {
+    document.getElementById('essayForm').style.display = 'block';
+  }
+}
+</script>
+{% endblock %}

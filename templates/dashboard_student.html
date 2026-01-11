@@ -1,0 +1,112 @@
+<!-- templates/dashboard_student.html -->
+{% extends "layout.html" %}
+
+{% block title %}Trang hoc sinh{% endblock %}
+
+{% block content %}
+<h2>TRANG HOC SINH</h2>
+
+<p style="text-align: right; margin-bottom: 20px;">
+  Xin chao, <strong>{{ session['exam_username'] }}</strong> | 
+  <a href="{{ url_for('logout_exam') }}">Dang xuat</a>
+</p>
+
+<div style="margin-bottom: 30px;">
+  <h3 style="color: #00796b;">DE THI HIEN CO</h3>
+  {% if exams %}
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="background-color: #e0f2f1;">
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Tieu de</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Loai</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thoi gian</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thao tac</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for exam_id, exam in exams.items() %}
+      <tr>
+        <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.title }}</td>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          {% if exam.type == 'multiple_choice' %}Trac nghiem{% else %}Tu luan{% endif %}
+        </td>
+        <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.duration }} phut</td>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          <a href="{{ url_for('do_exam', exam_id=exam_id) }}" style="display: inline-block; padding: 6px 12px; background-color: #009688; color: white; border-radius: 6px; text-decoration: none; font-size: 14px;">Lam bai</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color: #666;">Chua co de thi nao.</p>
+  {% endif %}
+</div>
+
+<div style="margin-bottom: 30px;">
+  <h3 style="color: #00796b;">KET QUA CUA BAN</h3>
+  {% if my_submissions %}
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="background-color: #e0f2f1;">
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">De thi</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Ngay nop</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Diem</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Chi tiet</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for submission in my_submissions %}
+      <tr>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          {% if exams.get(submission.exam_id) %}
+            {{ exams[submission.exam_id].title }}
+          {% else %}
+            <span style="color: #999;">Khong tim thay de</span>
+          {% endif %}
+        </td>
+        <td style="padding: 12px; border: 1px solid #ddd;">{{ submission.submitted_at }}</td>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          {% if submission.score is not none %}
+          <strong style="color: #00796b; font-size: 16px;">{{ submission.score }}/10</strong>
+          {% else %}
+          <span style="color: #ff9800;">Chua cham</span>
+          {% endif %}
+        </td>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          {% if submission.score is not none %}
+            <a href="{{ url_for('view_submission', submission_index=loop.index0) }}" 
+               style="display: inline-block; padding: 6px 16px; background-color: #28a745; color: white; border-radius: 20px; text-decoration: none; font-size: 14px; font-weight: 600;">
+              📋 Xem chi tiet
+            </a>
+          {% else %}
+            <span style="color: #ff9800; font-size: 14px;"> Dang cho cham...</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color: #666;">Ban chua lam bai thi nao.</p>
+  {% endif %}
+</div>
+
+<div>
+  <h3 style="color: #00796b;">TAI LIEU HOC TAP</h3>
+  {% if materials %}
+  <ul style="list-style: none; padding: 0;">
+    {% for material in materials %}
+    <li style="padding: 10px; border-bottom: 1px solid #eee;">
+      <strong>{{ material.title }}</strong><br>
+      <span style="color: #666; font-size: 14px;">{{ material.description }}</span><br>
+      <a href="{{ url_for('download_material', filename=material.filename) }}" style="font-size: 14px; color: #0288d1;">Tai xuong</a>
+      <span style="color: #999; font-size: 13px; margin-left: 15px;">{{ material.uploaded_at }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p style="color: #666;">Chua co tai lieu nao.</p>
+  {% endif %}
+</div>
+{% endblock %}
