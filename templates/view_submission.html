@@ -5,13 +5,13 @@
 {% block extra_css %}
 <style>
     .score-box {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
         color: white;
         padding: 30px;
         border-radius: 12px;
         text-align: center;
         margin-bottom: 30px;
-        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 10px 30px rgba(33, 147, 176, 0.3);
     }
     
     .score-box h2 {
@@ -30,12 +30,44 @@
         margin: 0;
     }
     
+    .grading-status {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid #2196f3;
+    }
+    
+    .grading-status.teacher-adjusted {
+        border-left-color: #4caf50;
+        background: #e8f5e9;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 6px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+    
+    .status-ai {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+    
+    .status-teacher {
+        background: #e8f5e9;
+        color: #388e3c;
+    }
+    
     .info-box {
         background: #f8f9fa;
         padding: 20px;
         border-radius: 8px;
         margin-bottom: 30px;
-        border-left: 4px solid #667eea;
+        border-left: 4px solid #2193b0;
     }
     
     .info-box p {
@@ -44,12 +76,152 @@
         font-size: 15px;
     }
     
+    /* AI FEEDBACK CHO TRẮC NGHIỆM */
+    .ai-mc-feedback {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+        padding: 25px;
+        border-radius: 12px;
+        margin: 30px 0;
+        border: 3px solid #ffc107;
+    }
+    
+    .ai-tf-feedback {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        padding: 25px;
+        border-radius: 12px;
+        margin: 30px 0;
+        border: 3px solid #2193b0;
+    }
+    
+    .ai-feedback-box {
+        background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+        padding: 25px;
+        border-radius: 12px;
+        margin: 30px 0;
+        border: 3px solid #2196F3;
+    }
+    
+    .ai-feedback-box h3,
+    .ai-mc-feedback h3,
+    .ai-tf-feedback h3 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 24px;
+        margin-top: 0;
+    }
+    
+    .ai-mc-feedback h3 {
+        color: #f57c00;
+    }
+    
+    .ai-tf-feedback h3 {
+        color: #1976d2;
+    }
+    
+    .ai-feedback-box h3 {
+        color: #1976d2;
+    }
+    
+    .feedback-item {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 15px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .feedback-label {
+        font-weight: 600;
+        font-size: 16px;
+        margin-bottom: 10px;
+        display: block;
+    }
+    
+    .feedback-content {
+        color: #333;
+        line-height: 1.8;
+        font-size: 15px;
+        white-space: pre-wrap;
+    }
+    
+    /* FORM ĐIỀU CHỈNH ĐIỂM */
+    .teacher-adjust-form {
+        background: #fff3e0;
+        padding: 25px;
+        border-radius: 12px;
+        margin: 30px 0;
+        border: 3px solid #f57c00;
+    }
+    
+    .teacher-adjust-form h3 {
+        color: #f57c00;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #333;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #f57c00;
+    }
+    
+    .btn-adjust {
+        background: linear-gradient(135deg, #f57c00 0%, #ff9800 100%);
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(245, 124, 0, 0.4);
+    }
+    
+    .btn-adjust:hover {
+        background: linear-gradient(135deg, #e65100 0%, #f57c00 100%);
+        box-shadow: 0 6px 20px rgba(245, 124, 0, 0.6);
+    }
+    
+    .teacher-comment-box {
+        background: #e8f5e9;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border-left: 4px solid #4caf50;
+    }
+    
+    .teacher-comment-box h4 {
+        color: #388e3c;
+        margin-top: 0;
+    }
+    
     .question-block {
         background: #f8f9fa;
         padding: 25px;
         border-radius: 10px;
         margin-bottom: 25px;
-        border-left: 5px solid #667eea;
+        border-left: 5px solid #2193b0;
         transition: all 0.3s ease;
     }
     
@@ -166,7 +338,7 @@
     .btn {
         display: inline-block;
         padding: 12px 30px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
         color: white;
         text-decoration: none;
         border-radius: 25px;
@@ -175,12 +347,12 @@
         border: none;
         cursor: pointer;
         margin: 5px;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 4px 15px rgba(33, 147, 176, 0.4);
     }
     
     .btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        box-shadow: 0 6px 20px rgba(33, 147, 176, 0.6);
         color: white;
         text-decoration: none;
     }
@@ -195,27 +367,8 @@
         box-shadow: 0 6px 20px rgba(108, 117, 125, 0.6);
     }
     
-    .feedback-box {
-        background: #fff3cd;
-        padding: 20px;
-        border-radius: 8px;
-        border-left: 4px solid #ffc107;
-        margin-top: 20px;
-    }
-    
-    .feedback-box h4 {
-        color: #856404;
-        margin-bottom: 15px;
-        font-size: 18px;
-    }
-    
-    .feedback-box p {
-        color: #856404;
-        line-height: 1.6;
-    }
-    
     .section-title {
-        color: #667eea;
+        color: #2193b0;
         font-size: 22px;
         font-weight: 600;
         margin: 30px 0 20px 0;
@@ -230,8 +383,16 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
     
+    .essay-feedback-box {
+        background: #f0f8ff;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 15px;
+        border-left: 4px solid #2196F3;
+    }
+    
     @media print {
-        .action-buttons {
+        .action-buttons, .teacher-adjust-form {
             display: none;
         }
         body {
@@ -244,22 +405,171 @@
 {% block content %}
 <h2>{{ exam.title }}</h2>
 
+<!-- HIỂN THỊ ĐIỂM VÀ TRẠNG THÁI -->
 <div class="score-box">
     <h2>{{ submission.score if submission.score is not none else '...' }}/10</h2>
-    <p>{{ 'Điểm của bạn' if session.exam_role == 'student' else 'Điểm của học sinh' }}</p>
+    <p>
+        {{ 'Diem cua ban' if session.exam_role == 'student' else 'Diem cua hoc sinh' }}
+        {% if submission.teacher_adjusted %}
+            <span class="status-badge status-teacher">✓ Giáo viên đã điều chỉnh</span>
+        {% elif submission.ai_graded %}
+            <span class="status-badge status-ai">🤖 AI đã chấm</span>
+        {% endif %}
+    </p>
 </div>
+
+<!-- TRẠNG THÁI CHẤM ĐIỂM -->
+{% if submission.teacher_adjusted %}
+<div class="grading-status teacher-adjusted">
+    <h4 style="color: #388e3c; margin-top: 0;">✓ Giáo viên đã điều chỉnh điểm</h4>
+    <p><strong>Điểm AI gốc:</strong> {{ submission.get('original_ai_score', submission.score) }}/10</p>
+    <p><strong>Điểm sau điều chỉnh:</strong> {{ submission.score }}/10</p>
+</div>
+{% elif submission.ai_graded %}
+<div class="grading-status">
+    <h4 style="color: #1976d2; margin-top: 0;">🤖 Bài đã được AI tự động chấm</h4>
+    <p>AI đã phân tích và chấm điểm ngay sau khi bạn nộp bài.</p>
+    {% if session.exam_role == 'teacher' %}
+        <p style="color: #f57c00;"><strong>Lưu ý:</strong> Bạn có thể điều chỉnh điểm bên dưới nếu cần.</p>
+    {% endif %}
+</div>
+{% endif %}
 
 <div class="info-box">
-    <p><strong>Học sinh:</strong> {{ submission.student }}</p>
-    <p><strong>Ngày nộp:</strong> {{ submission.submitted_at }}</p>
-    <p><strong>Loại đề:</strong> {{ 'Trắc nghiệm' if submission.type == 'multiple_choice' else 'Tự luận' }}</p>
+    <p><strong>Hoc sinh:</strong> {{ submission.student }}</p>
+    <p><strong>Ngay nop:</strong> {{ submission.submitted_at }}</p>
+    <p><strong>Loai de:</strong> 
+        {% if submission.type == 'multiple_choice' %}Trac nghiem
+        {% elif submission.type == 'mixed' %}Hon hop
+        {% else %}Tu luan{% endif %}
+    </p>
+    <p><strong>Lop:</strong> {{ exam.grade }}</p>
 </div>
 
-{% if submission.type == 'multiple_choice' %}
-    <h3 class="section-title">Câu trả lời chi tiết</h3>
+<!-- AI FEEDBACK CHO CÂU TRẮC NGHIỆM SAI -->
+{% if submission.mc_ai_feedback %}
+<div class="ai-mc-feedback">
+    <h3>🤖 AI PHAN TICH CAC CAU TRAC NGHIEM SAI</h3>
     
-    <!-- Phần trắc nghiệm ABCD -->
-    <h4 style="color: #2c3e50; margin: 25px 0 15px 0;">Phần 1: Trắc nghiệm (60%)</h4>
+    <div class="feedback-item">
+        <span class="feedback-label" style="color: #f57c00;">📚 Ke hoach on tap:</span>
+        <div class="feedback-content">{{ submission.mc_ai_feedback.ke_hoach_on_tap }}</div>
+    </div>
+    
+    <div class="feedback-item">
+        <span class="feedback-label" style="color: #2193b0;">🔗 Cac chu de lien quan:</span>
+        <div class="feedback-content">{{ submission.mc_ai_feedback.cac_chu_de_lien_quan }}</div>
+    </div>
+</div>
+{% endif %}
+
+<!-- AI FEEDBACK CHO CÂU ĐÚNG/SAI SAI -->
+{% if submission.tf_ai_feedback %}
+<div class="ai-tf-feedback">
+    <h3>🤖 AI PHAN TICH CAC Y DUNG/SAI SAI</h3>
+    
+    <div class="feedback-item">
+        <span class="feedback-label" style="color: #f57c00;">📚 Ke hoach on tap:</span>
+        <div class="feedback-content">{{ submission.tf_ai_feedback.ke_hoach_on_tap }}</div>
+    </div>
+    
+    <div class="feedback-item">
+        <span class="feedback-label" style="color: #2193b0;">🔗 Cac chu de lien quan:</span>
+        <div class="feedback-content">{{ submission.tf_ai_feedback.cac_chu_de_lien_quan }}</div>
+    </div>
+</div>
+{% endif %}
+
+<!-- PHAN HOI AI CHO BAI TU LUAN -->
+{% if submission.ai_feedback %}
+<div class="ai-feedback-box">
+    <h3>🤖 PHAN TICH TU AI</h3>
+    
+    <div class="feedback-item">
+        <span class="feedback-label" style="color: #28a745;">✅ Diem manh:</span>
+        <div class="feedback-content">{{ submission.ai_feedback.strengths }}</div>
+    </div>
+    
+    <div class="feedback-item">
+        <span class="feedback-label" style="color: #dc3545;">⚠️ Diem yeu can cai thien:</span>
+        <div class="feedback-content">{{ submission.ai_feedback.weaknesses }}</div>
+    </div>
+    
+    <div class="feedback-item">
+        <span class="feedback-label" style="color: #ffc107;">📚 Kien thuc con thieu:</span>
+        <div class="feedback-content">{{ submission.ai_feedback.missing_knowledge }}</div>
+    </div>
+    
+    <div class="feedback-item">
+        <span class="feedback-label" style="color: #17a2b8;">📝 Dang bai can luyen tap:</span>
+        <div class="feedback-content">{{ submission.ai_feedback.improvement_areas }}</div>
+    </div>
+    
+    <div class="feedback-item">
+        <span class="feedback-label" style="color: #2193b0;">💡 Loi khuyen:</span>
+        <div class="feedback-content">{{ submission.ai_feedback.suggestions }}</div>
+    </div>
+</div>
+{% endif %}
+
+<!-- NHẬN XÉT CỦA GIÁO VIÊN (nếu có) -->
+{% if submission.teacher_comment %}
+<div class="teacher-comment-box">
+    <h4>👨‍🏫 Nhận xét của giáo viên</h4>
+    <p style="line-height: 1.8; white-space: pre-wrap;">{{ submission.teacher_comment }}</p>
+</div>
+{% endif %}
+
+<!-- FORM ĐIỀU CHỈNH ĐIỂM (CHỈ HIỆN CHO GIÁO VIÊN) -->
+{% if session.exam_role == 'teacher' %}
+<div class="teacher-adjust-form">
+    <h3>👨‍🏫 Điều chỉnh điểm (Giáo viên)</h3>
+    <p style="text-align: center; color: #666; margin-bottom: 20px;">
+        {% if submission.teacher_adjusted %}
+            Bạn đã điều chỉnh điểm cho bài này. Bạn có thể thay đổi lại nếu cần.
+        {% else %}
+            AI đã chấm điểm: <strong>{{ submission.score }}/10</strong>. Bạn có thể giữ nguyên hoặc điều chỉnh.
+        {% endif %}
+    </p>
+    
+    <form method="POST" action="{{ url_for('adjust_score', submission_index=submission_index) }}">
+        <div class="form-group">
+            <label>Điểm mới (0-10):</label>
+            <input type="number" 
+                   name="teacher_score" 
+                   min="0" 
+                   max="10" 
+                   step="0.1" 
+                   value="{{ submission.teacher_score if submission.teacher_adjusted else submission.score }}"
+                   required>
+            <small style="color: #666;">Điểm AI: {{ submission.score }}/10</small>
+        </div>
+        
+        <div class="form-group">
+            <label>Nhận xét của giáo viên (Tùy chọn):</label>
+            <textarea name="teacher_comment" 
+                      rows="6" 
+                      placeholder="Thêm nhận xét, góp ý cho học sinh...">{{ submission.teacher_comment if submission.teacher_comment else '' }}</textarea>
+        </div>
+        
+        <button type="submit" class="btn-adjust">
+            {% if submission.teacher_adjusted %}
+                Cập nhật điều chỉnh
+            {% else %}
+                Xác nhận điều chỉnh điểm
+            {% endif %}
+        </button>
+    </form>
+</div>
+{% endif %}
+
+<!-- DE TRAC NGHIEM HOAC HON HOP -->
+{% if submission.type == 'multiple_choice' or submission.type == 'mixed' %}
+    <h3 class="section-title">Cau tra loi chi tiet</h3>
+    
+    <!-- Phan trac nghiem ABCD -->
+    {% if exam.questions.multiple_choice %}
+    <h4 style="color: #2c3e50; margin: 25px 0 15px 0;">Phan 1: Trac nghiem ABCD ({{ '60' if submission.type == 'multiple_choice' else '40' }}%)</h4>
     {% for i in range(exam.questions.multiple_choice|length) %}
         {% set question = exam.questions.multiple_choice[i] %}
         {% set user_answer = submission.answers.get('mc_' ~ i) %}
@@ -267,9 +577,9 @@
         
         <div class="question-block {{ 'correct' if is_correct else 'wrong' }}">
             <div class="question-title">
-                <span>Câu {{ i + 1 }}: {{ question.question }}</span>
+                <span>Cau {{ i + 1 }}: {{ question.question }}</span>
                 <span class="result-badge {{ 'correct' if is_correct else 'wrong' }}">
-                    {{ 'Đúng ✓' if is_correct else 'Sai ✗' }}
+                    {{ 'Dung ✓' if is_correct else 'Sai ✗' }}
                 </span>
             </div>
             
@@ -285,18 +595,29 @@
                     {% endif %}">
                     {{ option }}
                     {% if is_selected %}
-                        <strong style="color: #2196F3;"> ← Bạn chọn</strong>
+                        <strong style="color: #2196F3;"> ← Ban chon</strong>
                     {% endif %}
                     {% if is_correct_option and not is_selected %}
-                        <strong style="color: #4caf50;"> ← Đáp án đúng</strong>
+                        <strong style="color: #4caf50;"> ← Dap an dung</strong>
                     {% endif %}
                 </div>
             {% endfor %}
         </div>
     {% endfor %}
+    {% endif %}
     
-    <!-- Phần đúng sai -->
-    <h4 style="color: #2c3e50; margin: 35px 0 15px 0;">Phần 2: Đúng/Sai (40%)</h4>
+    <!-- Phan dung sai -->
+    {% if exam.questions.true_false %}
+    <h4 style="color: #2c3e50; margin: 35px 0 15px 0;">Phan 2: Dung/Sai ({{ '40' if submission.type == 'multiple_choice' else '30' }}%)</h4>
+    <p style="color: #666; margin-bottom: 20px;">
+        Phuong phap cham: 
+        {% if exam.get('tf_grading_method') == 'per_item' %}
+            Moi y dung +0.25d
+        {% else %}
+            Sai 1y (-0.5d), Sai 2y (-0.75d), Sai 3y (con 0.1d)
+        {% endif %}
+    </p>
+    
     {% for i in range(exam.questions.true_false|length) %}
         {% set tf_question = exam.questions.true_false[i] %}
         {% set user_answers = submission.answers.get('tf_' ~ i, []) %}
@@ -309,24 +630,24 @@
         
         {% if wrong_count == 0 %}
             {% set status = 'correct' %}
-            {% set label = 'Hoàn toàn đúng ✓' %}
+            {% set label = 'Hoan toan dung ✓' %}
         {% elif wrong_count == 1 %}
             {% set status = 'partial' %}
-            {% set label = 'Sai 1/4 ý' %}
+            {% set label = 'Sai 1/4 y' %}
         {% elif wrong_count == 2 %}
             {% set status = 'partial' %}
-            {% set label = 'Sai 2/4 ý' %}
+            {% set label = 'Sai 2/4 y' %}
         {% elif wrong_count == 3 %}
             {% set status = 'partial' %}
-            {% set label = 'Sai 3/4 ý' %}
+            {% set label = 'Sai 3/4 y' %}
         {% else %}
             {% set status = 'wrong' %}
-            {% set label = 'Hoàn toàn sai ✗' %}
+            {% set label = 'Hoan toan sai ✗' %}
         {% endif %}
         
         <div class="question-block {{ status }}">
             <div class="question-title">
-                <span>Câu {{ i + 1 }}: {{ tf_question.question }}</span>
+                <span>Cau {{ i + 1 + exam.questions.multiple_choice|length }}: {{ tf_question.question }}</span>
                 <span class="result-badge {{ status }}">{{ label }}</span>
             </div>
             
@@ -339,58 +660,90 @@
                 <div class="statement {{ 'correct' if is_correct else 'wrong' }}">
                     <strong>{{ j + 1 }}.</strong> {{ statement }}
                     <small>
-                        <strong>Bạn chọn:</strong> {{ 'Đúng' if user_tf else 'Sai' }} | 
-                        <strong>Đáp án:</strong> {{ 'Đúng' if correct_tf else 'Sai' }}
+                        <strong>Ban chon:</strong> {{ 'Dung' if user_tf else 'Sai' }} | 
+                        <strong>Dap an:</strong> {{ 'Dung' if correct_tf else 'Sai' }}
                         <strong>{{ '✓' if is_correct else '✗' }}</strong>
                     </small>
                 </div>
             {% endfor %}
         </div>
     {% endfor %}
+    {% endif %}
     
-{% elif submission.type == 'essay' %}
+    <!-- PHAN TU LUAN (nếu có trong bài hỗn hợp) -->
+    {% if submission.type == 'mixed' and exam.questions.essay %}
+    <h4 style="color: #2c3e50; margin: 35px 0 15px 0;">Phần 3: Tự luận (30%)</h4>
+    
+    {% for i in range(exam.questions.essay|length) %}
+        {% set essay_q = exam.questions.essay[i] %}
+        {% set essay_answer = submission.answers.essay[i] if submission.answers.essay else {} %}
+        
+        <div class="question-block">
+            <div class="question-title">
+                <span>Câu {{ i + 1 + exam.questions.multiple_choice|length + exam.questions.true_false|length }}: {{ essay_q.question }}</span>
+            </div>
+            
+            <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 15px;">
+                <strong style="color: #2193b0;">Câu trả lời của học sinh:</strong>
+                <p style="margin-top: 10px; line-height: 1.8; white-space: pre-wrap;">{{ essay_answer.text if essay_answer.text else 'Không có câu trả lời' }}</p>
+                
+                {% if essay_answer.image_path %}
+                <div style="margin-top: 15px;">
+                    <strong style="color: #2193b0;">Hình ảnh đính kèm:</strong>
+                    <br>
+                    <img src="{{ url_for('static', filename=essay_answer.image_path.replace('static/', '')) }}" 
+                         alt="Bài làm" 
+                         class="essay-image">
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if submission.essay_ai_feedback and submission.essay_ai_feedback[i] %}
+            <div class="essay-feedback-box">
+                <h4 style="color: #2196F3; margin-top: 0;">🤖 Nhận xét AI cho câu này</h4>
+                <p><strong>Điểm:</strong> {{ submission.essay_ai_feedback[i].score }}/10</p>
+                <p style="line-height: 1.8; margin-top: 10px;">{{ submission.essay_ai_feedback[i].feedback }}</p>
+            </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+    {% endif %}
+{% endif %}
+
+<!-- DE TU LUAN THUẦN -->
+{% if submission.type == 'essay' %}
     <h3 class="section-title">Bài làm tự luận</h3>
     
     <div class="question-block">
         <div class="question-title">
-            <span>Đề bài:</span>
+            <span>{{ exam.questions.essay[0].question }}</span>
         </div>
-        <p style="line-height: 1.8;">{{ exam.essay_question }}</p>
-    </div>
-    
-    <div class="question-block">
-        <div class="question-title">
-            <span>Bài làm của {{ 'bạn' if session.exam_role == 'student' else 'học sinh' }}:</span>
-        </div>
-        <p style="line-height: 1.8; white-space: pre-wrap;">{{ submission.essay_answer }}</p>
         
-        {% if submission.image_path %}
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 15px;">
+            <strong style="color: #2193b0;">Câu trả lời:</strong>
+            <p style="margin-top: 10px; line-height: 1.8; white-space: pre-wrap;">{{ submission.essay_answer }}</p>
+            
+            {% if submission.image_path %}
             <div style="margin-top: 15px;">
-                <strong>Ảnh bài làm:</strong><br>
-                <img src="{{ url_for('static', filename='uploads/' + submission.image_path.split('/')[-1]) }}" 
-                     class="essay-image" alt="Ảnh bài làm">
+                <strong style="color: #2193b0;">Hình ảnh đính kèm:</strong>
+                <br>
+                <img src="{{ url_for('static', filename=submission.image_path.replace('static/', '')) }}" 
+                     alt="Bài làm" 
+                     class="essay-image">
             </div>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
-    
-    {% if submission.graded %}
-        <div class="feedback-box">
-            <h4>📝 Nhận xét của giáo viên:</h4>
-            <p>{{ submission.feedback }}</p>
-        </div>
-    {% else %}
-        <div class="alert alert-warning">
-            <strong>⏳ Thông báo:</strong> Bài làm của bạn đang chờ giáo viên chấm điểm
-        </div>
-    {% endif %}
 {% endif %}
 
+<!-- BUTTONS -->
 <div class="action-buttons">
-    <a href="{{ url_for('dashboard_student') if session.exam_role == 'student' else url_for('dashboard_teacher') }}" class="btn">
-        ← Quay lại Dashboard
-    </a>
-    <button onclick="window.print()" class="btn btn-secondary">
-        🖨️ In kết quả
-    </button>
+    {% if session.exam_role == 'teacher' %}
+        <a href="{{ url_for('dashboard_teacher') }}" class="btn">← Quay lại Dashboard</a>
+    {% else %}
+        <a href="{{ url_for('dashboard_student') }}" class="btn">← Quay lại Dashboard</a>
+    {% endif %}
+    <button onclick="window.print()" class="btn btn-secondary">🖨️ In bài làm</button>
 </div>
+
 {% endblock %}

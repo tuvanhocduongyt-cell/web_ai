@@ -4,99 +4,475 @@
 {% block title %}Tao de thi{% endblock %}
 
 {% block content %}
+<style>
+  .exam-type-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+  }
+
+  .exam-card {
+    padding: 25px;
+    border: 3px solid #ddd;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    background: white;
+  }
+
+  .exam-card:hover {
+    border-color: #00796b;
+    background: #e0f2f1;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,121,107,0.2);
+  }
+
+  .exam-card.active {
+    border-color: #00796b;
+    background: #00796b;
+    color: white;
+  }
+
+  .exam-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+  }
+
+  .exam-form {
+    display: none;
+    background: #f5f5f5;
+    padding: 25px;
+    border-radius: 10px;
+    margin-top: 20px;
+  }
+
+  .exam-form.active {
+    display: block;
+    animation: fadeIn 0.3s;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #00796b;
+  }
+
+  .grading-method {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 10px;
+  }
+
+  .grading-option {
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .grading-option:hover {
+    border-color: #00796b;
+    background: #e0f2f1;
+  }
+
+  .grading-option.active {
+    border-color: #00796b;
+    background: #00796b;
+    color: white;
+  }
+
+  .info-box {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  /* THÊM STYLE CHO TIÊU CHÍ CHẤM */
+  .criteria-box {
+    background: #e3f2fd;
+    border-left: 4px solid #2196f3;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 5px;
+  }
+
+  .criteria-box h4 {
+    color: #1976d2;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+
+  .btn-submit {
+    background: linear-gradient(135deg, #00796b 0%, #009688 100%);
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .btn-submit:hover {
+    background: linear-gradient(135deg, #005a4d 0%, #00796b 100%);
+    box-shadow: 0 5px 15px rgba(0,121,107,0.3);
+  }
+</style>
+
 <h2>TAO DE THI MOI</h2>
 
-<div style="margin-bottom: 30px;">
-  <label style="display: block; margin-bottom: 10px; font-weight: 600;">Chon loai de thi:</label>
-  <select id="examTypeSelect" onchange="showExamForm()" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
-    <option value="">-- Chon loai --</option>
-    <option value="multiple_choice">Trac nghiem (ABCD + Dung/Sai)</option>
-    <option value="essay">Tu luan</option>
-  </select>
+<div class="exam-type-cards">
+  <div class="exam-card active" onclick="selectExamType('multiple_choice')">
+    <div class="exam-icon">📝</div>
+    <h3>Trac nghiem</h3>
+    <p style="font-size: 13px; color: #666;">Chi co ABCD va Dung/Sai</p>
+  </div>
+
+  <div class="exam-card" onclick="selectExamType('mixed')">
+    <div class="exam-icon">📋</div>
+    <h3>Hon hop</h3>
+    <p style="font-size: 13px; color: #666;">ABCD + Dung/Sai + Tu luan</p>
+  </div>
+
+  <div class="exam-card" onclick="selectExamType('essay')">
+    <div class="exam-icon">✍️</div>
+    <h3>Tu luan</h3>
+    <p style="font-size: 13px; color: #666;">Chi co cau hoi tu luan</p>
+  </div>
 </div>
 
-<div id="multipleChoiceForm" style="display: none;">
-  <h3 style="color: #00796b;">TAO DE TRAC NGHIEM</h3>
-  <form method="POST" enctype="multipart/form-data">
-    <input type="hidden" name="exam_type" value="multiple_choice">
-    
-    <div style="margin-bottom: 20px;">
-      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Tieu de de thi:</label>
-      <input type="text" name="title" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
+<!-- FORM TRẮC NGHIỆM - CẬP NHẬT -->
+<form id="form-multiple-choice" class="exam-form active" method="POST" enctype="multipart/form-data">
+  <input type="hidden" name="exam_type" value="multiple_choice">
+  
+  <h3 style="color: #00796b; margin-bottom: 20px;">Cau hinh de trac nghiem</h3>
+
+  <div class="form-group">
+    <label>Tieu de de thi:</label>
+    <input type="text" name="title" required placeholder="Vi du: Kiem tra 15 phut - Lich su Lop 10">
+  </div>
+
+  <div class="form-group">
+    <label>Phan loai lop:</label>
+    <select name="grade" required>
+      <option value="">-- Chon lop --</option>
+      <option value="10">Lop 10</option>
+      <option value="11">Lop 11</option>
+      <option value="12">Lop 12</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Thoi gian lam bai (phut):</label>
+    <input type="number" name="duration" value="60" min="10" max="180" required>
+  </div>
+
+  <div class="form-group">
+    <label>Upload file Word chua noi dung:</label>
+    <input type="file" name="word_file" accept=".docx" required>
+    <small style="color: #666;">File .docx chua noi dung de AI tao cau hoi</small>
+  </div>
+
+  <div class="form-group">
+    <label>So cau trac nghiem ABCD:</label>
+    <input type="number" name="num_multiple" value="10" min="1" max="50" required>
+  </div>
+
+  <div class="form-group">
+    <label>So cau Dung/Sai (moi cau 4 y):</label>
+    <input type="number" name="num_truefalse" value="5" min="1" max="20" required>
+  </div>
+
+  <!-- THÊM TIÊU CHÍ CHẤM TỔNG THỂ -->
+  <div class="criteria-box">
+    <h4>🤖 Tiêu chí chấm điểm tổng thể (Tùy chọn)</h4>
+    <div class="form-group" style="margin-bottom: 0;">
+      <label>Hướng dẫn chấm cho AI:</label>
+      <textarea name="general_grading_criteria" rows="4" placeholder="Vi du:
+- Trac nghiem: Chon dap an dung duoc diem day du
+- Dung/Sai: Ap dung phuong phap tru dan
+- Yeu cau hoc sinh phai hieu kien thuc co ban"></textarea>
+      <small style="color: #666;">AI se su dung tieu chi nay de cham diem chinh xac hon</small>
     </div>
+  </div>
 
-    <div style="margin-bottom: 20px;">
-      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Thoi gian lam bai (phut):</label>
-      <input type="number" name="duration" value="60" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
+  <div class="info-box">
+    <strong>Luu y:</strong> AI se tu dong tao cau hoi dua tren noi dung file Word ban upload
+  </div>
+
+  <button type="submit" class="btn-submit">Tao de thi</button>
+</form>
+
+<!-- FORM HỖN HỢP - CẬP NHẬT -->
+<form id="form-mixed" class="exam-form" method="POST" enctype="multipart/form-data">
+  <input type="hidden" name="exam_type" value="mixed">
+  
+  <h3 style="color: #00796b; margin-bottom: 20px;">Cau hinh de hon hop</h3>
+
+  <div class="form-group">
+    <label>Tieu de de thi:</label>
+    <input type="text" name="title" placeholder="Vi du: Kiem tra hoc ky - Lich su Lop 11">
+  </div>
+
+  <div class="form-group">
+    <label>Phan loai lop:</label>
+    <select name="grade">
+      <option value="">-- Chon lop --</option>
+      <option value="10">Lop 10</option>
+      <option value="11">Lop 11</option>
+      <option value="12">Lop 12</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Thoi gian lam bai (phut):</label>
+    <input type="number" name="duration" value="90" min="30" max="180">
+  </div>
+
+  <div class="form-group">
+    <label>Upload file Word chua noi dung:</label>
+    <input type="file" name="word_file" accept=".docx">
+    <small style="color: #666;">File .docx chua noi dung de AI tao cau hoi</small>
+  </div>
+
+  <div class="form-group">
+    <label>So cau trac nghiem ABCD:</label>
+    <input type="number" name="num_multiple" value="5" min="0" max="30">
+  </div>
+
+  <div class="form-group">
+    <label>So cau Dung/Sai:</label>
+    <input type="number" name="num_truefalse" value="3" min="0" max="15">
+  </div>
+
+  <div class="form-group">
+    <label>So cau Tu luan:</label>
+    <input type="number" name="num_essay" value="1" min="1" max="5" id="num_essay_mixed">
+  </div>
+
+  <div class="form-group">
+    <label>Phuong phap cham diem Dung/Sai:</label>
+    <div class="grading-method">
+      <label class="grading-option active" onclick="selectGrading('deduction', this)">
+        <input type="radio" name="tf_grading_method" value="deduction" checked style="display: none;">
+        <h4>Tru dan</h4>
+        <p style="font-size: 12px; margin-top: 8px;">
+          Sai 1 cau: -0.5 diem<br>
+          Sai 2 cau: -0.75 diem<br>
+          Sai 3 cau: chi con 0.1 diem
+        </p>
+      </label>
+
+      <label class="grading-option" onclick="selectGrading('per_item', this)">
+        <input type="radio" name="tf_grading_method" value="per_item" style="display: none;">
+        <h4>Tung y</h4>
+        <p style="font-size: 12px; margin-top: 8px;">
+          Moi y dung: +0.25 diem<br>
+          Moi y sai: +0 diem<br>
+          Toi da 1 diem/cau
+        </p>
+      </label>
     </div>
+  </div>
 
-    <div style="margin-bottom: 20px;">
-      <label style="display: block; margin-bottom: 8px; font-weight: 600;">So cau trac nghiem ABCD:</label>
-      <input type="number" name="num_multiple" value="10" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
+  <!-- THÊM TIÊU CHÍ CHẤM TỔNG THỂ -->
+  <div class="criteria-box">
+    <h4>🤖 Tiêu chí chấm điểm tổng thể</h4>
+    <div class="form-group" style="margin-bottom: 0;">
+      <label>Hướng dẫn chấm chung cho toàn bộ đề thi:</label>
+      <textarea name="general_grading_criteria" rows="4" placeholder="Vi du:
+- Cau trac nghiem va dung/sai: Tu dong cham
+- Phan tu luan: Yeu cau tra loi ro rang, co logic
+- Danh gia tong hop kha nang hieu bai va van dung kien thuc"></textarea>
+      <small style="color: #666;">AI se dung tieu chi nay de cham phan tu luan</small>
     </div>
+  </div>
 
-    <div style="margin-bottom: 20px;">
-      <label style="display: block; margin-bottom: 8px; font-weight: 600;">So cau Dung/Sai (moi cau 4 y):</label>
-      <input type="number" name="num_truefalse" value="5" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
+  <!-- KHU VỰC TIÊU CHÍ CHO TỪNG CÂU TỰ LUẬN -->
+  <div id="essay-criteria-container" style="display: none;">
+    <div class="criteria-box">
+      <h4>📝 Tiêu chí chấm cho từng câu tự luận</h4>
+      <p style="font-size: 13px; color: #666; margin-bottom: 15px;">
+        AI sẽ tạo câu hỏi tự luận từ file Word. Sau khi tạo xong, bạn có thể chỉnh sửa tiêu chí từng câu trong phần xem đề.
+      </p>
+      <div class="info-box">
+        <strong>💡 Mẹo:</strong> Với đề hỗn hợp, AI sẽ tự động tạo tiêu chí chấm cho từng câu tự luận. Bạn có thể điều chỉnh sau khi đề được tạo.
+      </div>
     </div>
+  </div>
 
-    <div style="margin-bottom: 20px;">
-      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Upload file Word (AI se tu dong tao de):</label>
-      <input type="file" name="word_file" accept=".docx" required style="width: 100%;">
-      <small style="color: #666;">Chi chap nhan file .docx</small>
+  <div class="info-box">
+    <strong>Phan bo diem:</strong> Trac nghiem 40% + Dung/Sai 30% + Tu luan 30%<br>
+    <strong>Luu y:</strong> AI se tu dong cham phan tu luan ngay sau khi hoc sinh nop bai
+  </div>
+
+  <button type="submit" class="btn-submit">Tao de thi</button>
+</form>
+
+<!-- FORM TỰ LUẬN - CẬP NHẬT -->
+<form id="form-essay" class="exam-form" method="POST">
+  <input type="hidden" name="exam_type" value="essay">
+  
+  <h3 style="color: #00796b; margin-bottom: 20px;">Cau hinh de tu luan</h3>
+
+  <div class="form-group">
+    <label>Tieu de de thi:</label>
+    <input type="text" name="title" placeholder="Vi du: Bai tap lon - Lich su Lop 12">
+  </div>
+
+  <div class="form-group">
+    <label>Phan loai lop:</label>
+    <select name="grade">
+      <option value="">-- Chon lop --</option>
+      <option value="10">Lop 10</option>
+      <option value="11">Lop 11</option>
+      <option value="12">Lop 12</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Thoi gian lam bai (phut):</label>
+    <input type="number" name="duration" value="90" min="30" max="180">
+  </div>
+
+  <div class="form-group">
+    <label>Cau hoi tu luan:</label>
+    <textarea name="essay_question" rows="4" placeholder="Nhap cau hoi tu luan..."></textarea>
+  </div>
+
+  <!-- CẬP NHẬT TIÊU CHÍ CHẤM CHI TIẾT HƠN -->
+  <div class="criteria-box">
+    <h4>🤖 Tiêu chí chấm điểm chi tiết cho AI</h4>
+    <div class="form-group" style="margin-bottom: 0;">
+      <label>Hướng dẫn chấm cụ thể:</label>
+      <textarea name="grading_criteria" rows="8" placeholder="Vi du CHI TIET:
+
+TIEU CHI CHAM (Thang diem 10):
+- Y 1: Nguyen nhan cua su kien (2 diem)
+  + Neu dung 2 nguyen nhan chinh: 2 diem
+  + Neu dung 1 nguyen nhan: 1 diem
+  
+- Y 2: Dien bien cua su kien (3 diem)
+  + Mo ta day du qua trinh: 3 diem
+  + Mo ta so luoc: 1.5 diem
+  
+- Y 3: Y nghia lich su (3 diem)
+  + Phan tich sau sac: 3 diem
+  + Chi nhan xet chung: 1.5 diem
+  
+- Y 4: Ket luan va bai hoc (2 diem)
+  + Ket luan ro rang, co bai hoc: 2 diem
+  + Chi co ket luan: 1 diem
+
+LUU Y CHAM:
+- Bai viet phai co logic, mach lac
+- Khong sao chep nguyen van tu sach
+- Danh gia cao neu co su phan tich ca nhan"></textarea>
+      <small style="color: #666;">
+        <strong>Quan trong:</strong> Tieu chi càng chi tiet, AI cham diem càng chinh xac. 
+        Nen phan chia ro tung y va quy dinh cu the so diem cho tung muc do.
+      </small>
     </div>
+  </div>
 
-    <button type="submit" style="width: 100%;">Tao de thi</button>
-  </form>
-</div>
-
-<div id="essayForm" style="display: none;">
-  <h3 style="color: #00796b;">TAO DE TU LUAN</h3>
-  <form method="POST">
-    <input type="hidden" name="exam_type" value="essay">
-    
-    <div style="margin-bottom: 20px;">
-      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Tieu de de thi:</label>
-      <input type="text" name="title" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
+  <!-- THÊM TIÊU CHÍ TỔNG THỂ -->
+  <div class="criteria-box">
+    <h4>📋 Tiêu chí chấm tổng thể (Tùy chọn)</h4>
+    <div class="form-group" style="margin-bottom: 0;">
+      <label>Yêu cầu chung về bài làm:</label>
+      <textarea name="general_grading_criteria" rows="3" placeholder="Vi du:
+- Bai lam phai co do dai tu 300-500 tu
+- Van ban phai mach lac, ro rang
+- Khong duoc sao chep tu nguon khac"></textarea>
     </div>
+  </div>
 
-    <div style="margin-bottom: 20px;">
-      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Thoi gian lam bai (phut):</label>
-      <input type="number" name="duration" value="90" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;">
-    </div>
+  <div class="info-box">
+    <strong>🤖 AI tu dong cham diem:</strong> Sau khi hoc sinh nop bai, AI se tu dong cham va dua ra:
+    <ul style="margin: 10px 0 0 20px;">
+      <li>Diem so (thang 10)</li>
+      <li>Phan tich diem manh</li>
+      <li>Chi ra diem yeu can cai thien</li>
+      <li>Kien thuc con thieu</li>
+      <li>Goi y cu the de hoc tot hon</li>
+    </ul>
+  </div>
 
-    <div style="margin-bottom: 20px;">
-      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Cau hoi tu luan:</label>
-      <textarea name="essay_question" rows="5" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;"></textarea>
-    </div>
-
-    <div style="margin-bottom: 20px;">
-      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Tieu chi cham diem:</label>
-      <textarea name="grading_criteria" rows="8" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px;" placeholder="Vi du:
-- Y 1 (2 diem): Neu duoc ...
-- Y 2 (3 diem): Phan tich ...
-- Y 3 (5 diem): Nhan xet ..."></textarea>
-    </div>
-
-    <button type="submit" style="width: 100%;">Tao de thi</button>
-  </form>
-</div>
+  <button type="submit" class="btn-submit">Tao de thi</button>
+</form>
 
 <p style="text-align: center; margin-top: 30px;">
-  <a href="{{ url_for('dashboard_teacher') }}">Quay lai trang quan ly</a>
+  <a href="{{ url_for('dashboard_teacher') }}" style="color: #00796b; text-decoration: none; font-weight: 600;">← Quay lai trang quan ly</a>
 </p>
 
 <script>
-function showExamForm() {
-  var examType = document.getElementById('examTypeSelect').value;
-  document.getElementById('multipleChoiceForm').style.display = 'none';
-  document.getElementById('essayForm').style.display = 'none';
+function selectExamType(type) {
+  document.querySelectorAll('.exam-card').forEach(card => {
+    card.classList.remove('active');
+  });
   
-  if (examType === 'multiple_choice') {
-    document.getElementById('multipleChoiceForm').style.display = 'block';
-  } else if (examType === 'essay') {
-    document.getElementById('essayForm').style.display = 'block';
-  }
+  event.target.closest('.exam-card').classList.add('active');
+  
+  document.querySelectorAll('.exam-form').forEach(form => {
+    form.classList.remove('active');
+  });
+  
+  document.getElementById('form-' + type).classList.add('active');
 }
+
+function selectGrading(method, element) {
+  element.closest('.grading-method').querySelectorAll('.grading-option').forEach(opt => {
+    opt.classList.remove('active');
+  });
+  
+  element.classList.add('active');
+}
+
+// Hiển thị/ẩn phần tiêu chí tự luận khi thay đổi số câu
+document.getElementById('num_essay_mixed')?.addEventListener('change', function() {
+  const container = document.getElementById('essay-criteria-container');
+  if (parseInt(this.value) > 0) {
+    container.style.display = 'block';
+  } else {
+    container.style.display = 'none';
+  }
+});
 </script>
+
 {% endblock %}

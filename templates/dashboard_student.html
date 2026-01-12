@@ -4,6 +4,201 @@
 {% block title %}Trang hoc sinh{% endblock %}
 
 {% block content %}
+<style>
+  .grade-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e0f2f1;
+    padding-bottom: 10px;
+  }
+
+  .grade-tab {
+    padding: 10px 20px;
+    border: 2px solid #00796b;
+    background: white;
+    color: #00796b;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    font-size: 14px;
+  }
+
+  .grade-tab:hover {
+    background: #e0f2f1;
+  }
+
+  .grade-tab.active {
+    background: #00796b;
+    color: white;
+  }
+
+  .grade-content {
+    animation: fadeIn 0.3s;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .materials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 15px;
+  }
+
+  .material-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+  }
+
+  .material-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+  }
+
+  .material-icon {
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  .material-card h5 {
+    color: #00796b;
+    font-size: 16px;
+    margin-bottom: 10px;
+    min-height: 40px;
+  }
+
+  .material-card p {
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 10px;
+    min-height: 60px;
+  }
+
+  .material-card small {
+    color: #999;
+    font-size: 12px;
+    display: block;
+    margin-bottom: 15px;
+  }
+
+  .material-actions {
+    text-align: center;
+  }
+
+  .btn-material {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #00796b 0%, #009688 100%);
+    color: white;
+    border-radius: 25px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0,121,107,0.3);
+  }
+
+  .btn-material:hover {
+    background: linear-gradient(135deg, #005a4d 0%, #00796b 100%);
+    box-shadow: 0 4px 12px rgba(0,121,107,0.5);
+    transform: translateY(-2px);
+  }
+
+  .btn-material.video {
+    background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%);
+  }
+
+  .btn-material.video:hover {
+    background: linear-gradient(135deg, #b71c1c 0%, #d32f2f 100%);
+  }
+
+  .no-materials {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-size: 14px;
+    background: #f5f5f5;
+    border-radius: 8px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .section-header h3 {
+    color: #00796b;
+    margin: 0;
+  }
+
+  .material-type-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .material-type-badge.file {
+    background: #e3f2fd;
+    color: #1976d2;
+  }
+
+  .material-type-badge.video {
+    background: #fce4ec;
+    color: #c2185b;
+  }
+
+  /* THÊM STYLE CHO TRẠNG THÁI ĐIỂM */
+  .score-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .score-ai {
+    background: #e3f2fd;
+    color: #1976d2;
+  }
+
+  .score-teacher {
+    background: #e8f5e9;
+    color: #388e3c;
+  }
+
+  .score-pending {
+    background: #fff3e0;
+    color: #f57c00;
+  }
+
+  .feedback-preview {
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 5px;
+    font-size: 13px;
+    color: #666;
+    border-left: 3px solid #2196f3;
+  }
+</style>
+
 <h2>TRANG HOC SINH</h2>
 
 <p style="text-align: right; margin-bottom: 20px;">
@@ -28,7 +223,9 @@
       <tr>
         <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.title }}</td>
         <td style="padding: 12px; border: 1px solid #ddd;">
-          {% if exam.type == 'multiple_choice' %}Trac nghiem{% else %}Tu luan{% endif %}
+          {% if exam.type == 'multiple_choice' %}Trac nghiem
+          {% elif exam.type == 'mixed' %}Hon hop
+          {% else %}Tu luan{% endif %}
         </td>
         <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.duration }} phut</td>
         <td style="padding: 12px; border: 1px solid #ddd;">
@@ -43,15 +240,22 @@
   {% endif %}
 </div>
 
+<!-- CẬP NHẬT PHẦN KẾT QUẢ - Hiển thị feedback AI -->
 <div style="margin-bottom: 30px;">
-  <h3 style="color: #00796b;">KET QUA CUA BAN</h3>
+  <h3 style="color: #00796b;">🎯 KET QUA CUA BAN</h3>
+  <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+    🤖 Bai tu luan duoc AI tu dong cham va phan hoi ngay sau khi nop.
+  </p>
+  
   {% if my_submissions %}
   <table style="width: 100%; border-collapse: collapse;">
     <thead>
       <tr style="background-color: #e0f2f1;">
         <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">De thi</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Loai</th>
         <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Ngay nop</th>
         <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Diem</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Trang thai</th>
         <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Chi tiet</th>
       </tr>
     </thead>
@@ -60,27 +264,58 @@
       <tr>
         <td style="padding: 12px; border: 1px solid #ddd;">
           {% if exams.get(submission.exam_id) %}
-            {{ exams[submission.exam_id].title }}
+            <strong>{{ exams[submission.exam_id].title }}</strong>
           {% else %}
             <span style="color: #999;">Khong tim thay de</span>
+          {% endif %}
+        </td>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          {% if submission.type == 'essay' %}
+            <span style="color: #f57c00;">📝 Tu luan</span>
+          {% elif submission.type == 'mixed' %}
+            <span style="color: #9c27b0;">🔀 Hon hop</span>
+          {% else %}
+            <span style="color: #2196f3;">✓ Trac nghiem</span>
           {% endif %}
         </td>
         <td style="padding: 12px; border: 1px solid #ddd;">{{ submission.submitted_at }}</td>
         <td style="padding: 12px; border: 1px solid #ddd;">
           {% if submission.score is not none %}
-          <strong style="color: #00796b; font-size: 16px;">{{ submission.score }}/10</strong>
+            <strong style="color: #00796b; font-size: 18px;">{{ submission.score }}/10</strong>
           {% else %}
-          <span style="color: #ff9800;">Chua cham</span>
+            <span class="score-badge score-pending">⏳ Dang cho</span>
+          {% endif %}
+        </td>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          {% if submission.teacher_adjusted %}
+            <span class="score-badge score-teacher">
+              ✓ GV da dieu chinh
+            </span>
+          {% elif submission.ai_graded %}
+            <span class="score-badge score-ai">
+              🤖 AI da cham
+            </span>
+          {% else %}
+            <span class="score-badge score-pending">
+              ⏳ Chua cham
+            </span>
+          {% endif %}
+          
+          <!-- Hiển thị feedback AI ngắn gọn nếu có -->
+          {% if submission.ai_feedback and submission.type == 'essay' %}
+            <div class="feedback-preview">
+              💡 <strong>Diem manh:</strong> {{ submission.ai_feedback.strengths[:80] }}{% if submission.ai_feedback.strengths|length > 80 %}...{% endif %}
+            </div>
           {% endif %}
         </td>
         <td style="padding: 12px; border: 1px solid #ddd;">
           {% if submission.score is not none %}
             <a href="{{ url_for('view_submission', submission_index=loop.index0) }}" 
-               style="display: inline-block; padding: 6px 16px; background-color: #28a745; color: white; border-radius: 20px; text-decoration: none; font-size: 14px; font-weight: 600;">
+               style="display: inline-block; padding: 8px 16px; background-color: #28a745; color: white; border-radius: 20px; text-decoration: none; font-size: 14px; font-weight: 600;">
               📋 Xem chi tiet
             </a>
           {% else %}
-            <span style="color: #ff9800; font-size: 14px;"> Dang cho cham...</span>
+            <span style="color: #ff9800; font-size: 14px;">Dang cho cham...</span>
           {% endif %}
         </td>
       </tr>
@@ -93,20 +328,71 @@
 </div>
 
 <div>
-  <h3 style="color: #00796b;">TAI LIEU HOC TAP</h3>
-  {% if materials %}
-  <ul style="list-style: none; padding: 0;">
-    {% for material in materials %}
-    <li style="padding: 10px; border-bottom: 1px solid #eee;">
-      <strong>{{ material.title }}</strong><br>
-      <span style="color: #666; font-size: 14px;">{{ material.description }}</span><br>
-      <a href="{{ url_for('download_material', filename=material.filename) }}" style="font-size: 14px; color: #0288d1;">Tai xuong</a>
-      <span style="color: #999; font-size: 13px; margin-left: 15px;">{{ material.uploaded_at }}</span>
-    </li>
-    {% endfor %}
-  </ul>
-  {% else %}
-  <p style="color: #666;">Chua co tai lieu nao.</p>
-  {% endif %}
+  <div class="section-header">
+    <h3>📚 TAI LIEU HOC TAP</h3>
+  </div>
+  
+  <div class="grade-tabs">
+    <button onclick="showGrade('10')" class="grade-tab active">📘 Lop 10</button>
+    <button onclick="showGrade('11')" class="grade-tab">📗 Lop 11</button>
+    <button onclick="showGrade('12')" class="grade-tab">📕 Lop 12</button>
+  </div>
+  
+  {% for grade in ['10', '11', '12'] %}
+  <div id="grade-{{ grade }}" class="grade-content" style="{% if grade != '10' %}display: none;{% endif %}">
+    {% if materials_by_grade[grade] %}
+      <div class="materials-grid">
+        {% for material in materials_by_grade[grade] %}
+        <div class="material-card">
+          <div class="material-icon">
+            {% if material.type == 'file' %}
+              📄
+            {% else %}
+              🎥
+            {% endif %}
+          </div>
+          
+          <span class="material-type-badge {% if material.type == 'file' %}file{% else %}video{% endif %}">
+            {% if material.type == 'file' %}Tai lieu{% else %}Video{% endif %}
+          </span>
+          
+          <h5>{{ material.title }}</h5>
+          <p>{{ material.description or 'Khong co mo ta' }}</p>
+          <small>👤 {{ material.uploaded_by }} • 📅 {{ material.uploaded_at }}</small>
+          
+          <div class="material-actions">
+            {% if material.type == 'file' %}
+              <a href="{{ url_for('download_material', filename=material.filename) }}" 
+                 class="btn-material">
+                📥 Tai xuong
+              </a>
+            {% else %}
+              <a href="{{ material.video_link }}" 
+                 target="_blank" 
+                 class="btn-material video">
+                ▶️ Xem video
+              </a>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="no-materials">
+        <p style="font-size: 48px; margin-bottom: 10px;">📭</p>
+        <p>Chua co tai lieu nao cho lop {{ grade }}</p>
+      </div>
+    {% endif %}
+  </div>
+  {% endfor %}
 </div>
+
+<script>
+function showGrade(grade) {
+    document.querySelectorAll('.grade-content').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.grade-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('grade-' + grade).style.display = 'block';
+    event.target.classList.add('active');
+}
+</script>
 {% endblock %}

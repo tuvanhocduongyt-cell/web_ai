@@ -4,6 +4,161 @@
 {% block title %}Trang giao vien{% endblock %}
 
 {% block content %}
+<style>
+  .grade-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e0f2f1;
+    padding-bottom: 10px;
+  }
+
+  .grade-tab {
+    padding: 10px 20px;
+    border: 2px solid #00796b;
+    background: white;
+    color: #00796b;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    font-size: 14px;
+  }
+
+  .grade-tab:hover {
+    background: #e0f2f1;
+  }
+
+  .grade-tab.active {
+    background: #00796b;
+    color: white;
+  }
+
+  .grade-content {
+    animation: fadeIn 0.3s;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .material-type-selector {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .type-option {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .type-option:hover {
+    border-color: #00796b;
+    background: #e0f2f1;
+  }
+
+  .type-option.active {
+    border-color: #00796b;
+    background: #00796b;
+    color: white;
+  }
+
+  .upload-section {
+    display: none;
+  }
+
+  .upload-section.active {
+    display: block;
+  }
+
+  .materials-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+
+  .materials-table th,
+  .materials-table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+
+  .materials-table thead tr {
+    background-color: #e0f2f1;
+  }
+
+  .btn-action {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    margin: 2px;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-download {
+    background: #4CAF50;
+    color: white;
+  }
+
+  .btn-view {
+    background: #2196F3;
+    color: white;
+  }
+
+  .btn-delete {
+    background: #f44336;
+    color: white;
+  }
+
+  .no-materials {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-size: 14px;
+    background: #f5f5f5;
+    border-radius: 8px;
+  }
+
+  .material-icon {
+    font-size: 20px;
+  }
+
+  /* THÊM STYLE CHO TRẠNG THÁI CHẤM ĐIỂM */
+  .status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+  }
+
+  .status-ai-graded {
+    background: #e3f2fd;
+    color: #1976d2;
+  }
+
+  .status-teacher-adjusted {
+    background: #e8f5e9;
+    color: #388e3c;
+  }
+
+  .status-pending {
+    background: #fff3e0;
+    color: #f57c00;
+  }
+</style>
+
 <h2>TRANG GIAO VIEN</h2>
 
 <p style="text-align: right; margin-bottom: 20px;">
@@ -20,23 +175,70 @@
   </div>
 </div>
 
+<!-- Form Upload Tài Liệu -->
 <div id="uploadMaterialForm" style="display: none; background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-  <h4 style="margin-top: 0;">Dang tai lieu bai giang</h4>
+  <h4 style="margin-top: 0;">📚 Dang tai lieu bai giang</h4>
   <form method="POST" action="{{ url_for('upload_material') }}" enctype="multipart/form-data">
+    
     <div style="margin-bottom: 15px;">
       <label style="display: block; margin-bottom: 5px; font-weight: 600;">Tieu de:</label>
       <input type="text" name="title" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
     </div>
+    
     <div style="margin-bottom: 15px;">
       <label style="display: block; margin-bottom: 5px; font-weight: 600;">Mo ta:</label>
       <textarea name="description" rows="3" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;"></textarea>
     </div>
+    
     <div style="margin-bottom: 15px;">
-      <label style="display: block; margin-bottom: 5px; font-weight: 600;">File tai lieu:</label>
-      <input type="file" name="material_file" required style="width: 100%;">
+      <label style="display: block; margin-bottom: 5px; font-weight: 600;">Chon lop:</label>
+      <select name="grade" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+        <option value="">-- Chon lop --</option>
+        <option value="10">📘 Lop 10</option>
+        <option value="11">📗 Lop 11</option>
+        <option value="12">📕 Lop 12</option>
+      </select>
     </div>
-    <button type="submit" style="background-color: #009688;">Tai len</button>
-    <button type="button" onclick="document.getElementById('uploadMaterialForm').style.display='none'" style="background-color: #757575; margin-left: 10px;">Huy</button>
+    
+    <div style="margin-bottom: 15px;">
+      <label style="display: block; margin-bottom: 10px; font-weight: 600;">Loai tai lieu:</label>
+      <div class="material-type-selector">
+        <label class="type-option active" onclick="selectMaterialType('file', this)">
+          <input type="radio" name="material_type" value="file" checked>
+          <div style="font-size: 32px; margin-bottom: 8px;">📄</div>
+          <div style="font-weight: 600;">File tai lieu</div>
+          <small>PDF, Word, PowerPoint</small>
+        </label>
+        
+        <label class="type-option" onclick="selectMaterialType('video', this)">
+          <input type="radio" name="material_type" value="video">
+          <div style="font-size: 32px; margin-bottom: 8px;">🎥</div>
+          <div style="font-weight: 600;">Video bai giang</div>
+          <small>Google Drive link</small>
+        </label>
+      </div>
+    </div>
+    
+    <!-- Upload File Section -->
+    <div id="file-upload" class="upload-section active">
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Chon file:</label>
+        <input type="file" name="material_file" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt" style="width: 100%;">
+        <small style="color: #666;">Ho tro: PDF, Word, PowerPoint</small>
+      </div>
+    </div>
+    
+    <!-- Video Link Section -->
+    <div id="video-upload" class="upload-section">
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Link Google Drive:</label>
+        <input type="text" name="video_link" placeholder="https://drive.google.com/file/d/..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+        <small style="color: #666;">Paste link chia se tu Google Drive (Luu y: Phai bat che do "Anyone with the link can view")</small>
+      </div>
+    </div>
+    
+    <button type="submit" style="background-color: #009688; padding: 10px 24px; color: white; border: none; border-radius: 6px; cursor: pointer;">Tai len</button>
+    <button type="button" onclick="document.getElementById('uploadMaterialForm').style.display='none'" style="background-color: #757575; padding: 10px 24px; color: white; border: none; border-radius: 6px; cursor: pointer; margin-left: 10px;">Huy</button>
   </form>
 </div>
 
@@ -58,7 +260,9 @@
       <tr>
         <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.title }}</td>
         <td style="padding: 12px; border: 1px solid #ddd;">
-          {% if exam.type == 'multiple_choice' %}Trac nghiem{% else %}Tu luan{% endif %}
+          {% if exam.type == 'multiple_choice' %}Trac nghiem
+          {% elif exam.type == 'mixed' %}Hon hop
+          {% else %}Tu luan{% endif %}
         </td>
         <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.duration }} phut</td>
         <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.created_at }}</td>
@@ -81,90 +285,230 @@
   </div>
 </div>
 
+<!-- CẬP NHẬT: DANH SÁCH BÀI NỘP - Hiển thị tất cả bài có tự luận -->
 <div style="margin-bottom: 30px;">
-  <h3 style="color: #00796b;">BAI NOP CAN CHAM</h3>
-  {% set essay_submissions = submissions|selectattr('type', 'equalto', 'essay')|selectattr('graded', 'equalto', False)|list %}
-  {% if essay_submissions %}
+  <h3 style="color: #00796b;">🤖 BAI NOP DA DUOC AI CHAM</h3>
+  <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+    📌 AI da tu dong cham tat ca bai tu luan. Ban co the xem va dieu chinh diem neu can.
+  </p>
+  
+  {% set ai_graded_submissions = submissions|selectattr('ai_graded', 'equalto', True)|list %}
+  
+  {% if ai_graded_submissions %}
   <table style="width: 100%; border-collapse: collapse;">
     <thead>
       <tr style="background-color: #e0f2f1;">
         <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Hoc sinh</th>
         <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">De thi</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Loai</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Diem AI</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Trang thai</th>
         <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Ngay nop</th>
         <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thao tac</th>
       </tr>
     </thead>
     <tbody>
-      {% for submission in essay_submissions %}
+      {% for submission in ai_graded_submissions %}
       <tr>
-        <td style="padding: 12px; border: 1px solid #ddd;">{{ submission.student }}</td>
-        <td style="padding: 12px; border: 1px solid #ddd;">{{ exams[submission.exam_id].title }}</td>
-        <td style="padding: 12px; border: 1px solid #ddd;">{{ submission.submitted_at }}</td>
         <td style="padding: 12px; border: 1px solid #ddd;">
-          <form method="POST" action="{{ url_for('grade_essay', submission_index=loop.index0) }}" style="display: inline;">
-            <button type="submit" style="padding: 6px 12px; font-size: 14px; background-color: #f57c00;">Cham diem</button>
-          </form>
+          <strong>{{ submission.student }}</strong>
+        </td>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          {{ exams[submission.exam_id].title }}
+        </td>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          {% if submission.type == 'essay' %}
+            <span style="color: #f57c00;">📝 Tu luan</span>
+          {% elif submission.type == 'mixed' %}
+            <span style="color: #9c27b0;">🔀 Hon hop</span>
+          {% else %}
+            <span style="color: #2196f3;">✓ Trac nghiem</span>
+          {% endif %}
+        </td>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          <strong style="color: #1976d2; font-size: 16px;">
+            {{ submission.score }} diem
+          </strong>
+        </td>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          {% if submission.teacher_adjusted %}
+            <span class="status-badge status-teacher-adjusted">
+              ✓ GV da dieu chinh
+            </span>
+          {% else %}
+            <span class="status-badge status-ai-graded">
+              🤖 AI da cham
+            </span>
+          {% endif %}
+        </td>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          {{ submission.submitted_at }}
+        </td>
+        <td style="padding: 12px; border: 1px solid #ddd;">
+          <a href="{{ url_for('view_submission', submission_index=loop.index0) }}" 
+             style="padding: 6px 12px; font-size: 14px; background-color: #0288d1; color: white; text-decoration: none; border-radius: 4px; display: inline-block;">
+            {% if submission.teacher_adjusted %}
+              Xem chi tiet
+            {% else %}
+              Xem & Dieu chinh
+            {% endif %}
+          </a>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
   {% else %}
-  <p style="color: #666;">Khong co bai nop can cham.</p>
+  <p style="color: #666;">Chua co bai nop nao.</p>
   {% endif %}
 </div>
 
+<!-- TAI LIEU DA DANG - PHAN LOAI THEO LOP -->
 <div>
-  <h3 style="color: #00796b;">TAI LIEU DA DANG</h3>
-  {% if materials %}
-  <ul style="list-style: none; padding: 0;">
-    {% for material in materials %}
-    <li style="padding: 10px; border-bottom: 1px solid #eee;">
-      <strong>{{ material.title }}</strong><br>
-      <span style="color: #666; font-size: 14px;">{{ material.description }}</span><br>
-      <span style="color: #999; font-size: 13px;">Dang boi: {{ material.uploaded_by }} - {{ material.uploaded_at }}</span>
-    </li>
-    {% endfor %}
-  </ul>
-  {% else %}
-  <p style="color: #666;">Chua co tai lieu nao.</p>
-  {% endif %}
+  <h3 style="color: #00796b;">📚 TAI LIEU DA DANG</h3>
+  
+  <div class="grade-tabs">
+    <button onclick="showGradeMaterials('10')" class="grade-tab active">📘 Lop 10</button>
+    <button onclick="showGradeMaterials('11')" class="grade-tab">📗 Lop 11</button>
+    <button onclick="showGradeMaterials('12')" class="grade-tab">📕 Lop 12</button>
+  </div>
+  
+  {% for grade in ['10', '11', '12'] %}
+  <div id="materials-grade-{{ grade }}" class="grade-content" style="{% if grade != '10' %}display: none;{% endif %}">
+    {% if materials_by_grade[grade] %}
+      <table class="materials-table">
+        <thead>
+          <tr>
+            <th style="width: 5%;">Loai</th>
+            <th style="width: 25%;">Tieu de</th>
+            <th style="width: 30%;">Mo ta</th>
+            <th style="width: 15%;">Nguoi dang</th>
+            <th style="width: 15%;">Ngay dang</th>
+            <th style="width: 10%;">Thao tac</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for material in materials_by_grade[grade] %}
+          <tr>
+            <td style="text-align: center;">
+              <span class="material-icon">
+                {% if material.type == 'file' %}📄{% else %}🎥{% endif %}
+              </span>
+            </td>
+            <td><strong>{{ material.title }}</strong></td>
+            <td>{{ material.description or 'Khong co mo ta' }}</td>
+            <td>{{ material.uploaded_by }}</td>
+            <td>{{ material.uploaded_at }}</td>
+            <td>
+              {% if material.type == 'file' %}
+                <a href="{{ url_for('download_material', filename=material.filename) }}" class="btn-action btn-download">Tai xuong</a>
+              {% else %}
+                <a href="{{ material.video_link }}" target="_blank" class="btn-action btn-view">Xem</a>
+              {% endif %}
+              <form action="{{ url_for('delete_material', material_id=material.id) }}" method="POST" style="display: inline;">
+                <button type="submit" class="btn-action btn-delete" onclick="return confirm('Ban chac chan muon xoa tai lieu nay?')">Xoa</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="no-materials">
+        <p style="font-size: 48px; margin-bottom: 10px;">📭</p>
+        <p>Chua co tai lieu nao cho lop {{ grade }}</p>
+      </div>
+    {% endif %}
+  </div>
+  {% endfor %}
 </div>
 
 <script>
 var examsData = {{ exams|tojson }};
 
+function selectMaterialType(type, element) {
+  document.querySelectorAll('.type-option').forEach(el => el.classList.remove('active'));
+  element.classList.add('active');
+  
+  if (type === 'file') {
+    document.getElementById('file-upload').classList.add('active');
+    document.getElementById('video-upload').classList.remove('active');
+    document.querySelector('input[name="material_file"]').required = true;
+    document.querySelector('input[name="video_link"]').required = false;
+  } else {
+    document.getElementById('file-upload').classList.remove('active');
+    document.getElementById('video-upload').classList.add('active');
+    document.querySelector('input[name="material_file"]').required = false;
+    document.querySelector('input[name="video_link"]').required = true;
+  }
+}
+
+function showGradeMaterials(grade) {
+  document.querySelectorAll('.grade-content').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.grade-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('materials-grade-' + grade).style.display = 'block';
+  event.target.classList.add('active');
+}
+
 function viewExam(examId) {
   var exam = examsData[examId];
   var content = '<h2 style="color: #00796b;">' + exam.title + '</h2>';
-  content += '<p><strong>Loai:</strong> ' + (exam.type === 'multiple_choice' ? 'Trac nghiem' : 'Tu luan') + '</p>';
+  content += '<p><strong>Loai:</strong> ';
+  if (exam.type === 'multiple_choice') content += 'Trac nghiem';
+  else if (exam.type === 'mixed') content += 'Hon hop';
+  else content += 'Tu luan';
+  content += '</p>';
   content += '<p><strong>Thoi gian:</strong> ' + exam.duration + ' phut</p>';
   content += '<p><strong>Tong diem:</strong> ' + exam.total_score + ' diem</p>';
+  
+  // Hiển thị tiêu chí chấm tổng thể (nếu có)
+  if (exam.general_grading_criteria) {
+    content += '<div style="background: #fff3e0; padding: 15px; margin: 15px 0; border-radius: 8px; border-left: 4px solid #f57c00;">';
+    content += '<h4 style="margin-top: 0; color: #f57c00;">📋 Tieu chi cham tong the</h4>';
+    content += '<pre style="white-space: pre-wrap; font-family: inherit;">' + exam.general_grading_criteria + '</pre>';
+    content += '</div>';
+  }
+  
   content += '<hr style="margin: 20px 0;">';
   
-  if (exam.type === 'multiple_choice') {
-    content += '<h3>PHAN TRAC NGHIEM</h3>';
-    exam.questions.multiple_choice.forEach(function(q, i) {
-      content += '<div style="background: #f5f5f5; padding: 15px; margin-bottom: 15px; border-radius: 8px;">';
-      content += '<p><strong>Cau ' + (i+1) + ':</strong> ' + q.question + '</p>';
-      q.options.forEach(function(opt) {
-        var isCorrect = opt[0] === q.answer;
-        content += '<p style="margin-left: 20px; ' + (isCorrect ? 'color: green; font-weight: bold;' : '') + '">' + opt + (isCorrect ? ' (Dap an dung)' : '') + '</p>';
+  if (exam.type === 'multiple_choice' || exam.type === 'mixed') {
+    if (exam.questions.multiple_choice && exam.questions.multiple_choice.length > 0) {
+      content += '<h3>PHAN TRAC NGHIEM</h3>';
+      exam.questions.multiple_choice.forEach(function(q, i) {
+        content += '<div style="background: #f5f5f5; padding: 15px; margin-bottom: 15px; border-radius: 8px;">';
+        content += '<p><strong>Cau ' + (i+1) + ':</strong> ' + q.question + '</p>';
+        q.options.forEach(function(opt) {
+          var isCorrect = opt[0] === q.answer;
+          content += '<p style="margin-left: 20px; ' + (isCorrect ? 'color: green; font-weight: bold;' : '') + '">' + opt + (isCorrect ? ' (Dap an dung)' : '') + '</p>';
+        });
+        content += '</div>';
       });
-      content += '</div>';
-    });
+    }
     
-    content += '<h3>PHAN DUNG/SAI</h3>';
-    exam.questions.true_false.forEach(function(tf, i) {
-      content += '<div style="background: #f5f5f5; padding: 15px; margin-bottom: 15px; border-radius: 8px;">';
-      content += '<p><strong>Cau ' + (i + exam.questions.multiple_choice.length + 1) + ':</strong> ' + tf.question + '</p>';
-      tf.statements.forEach(function(stmt, j) {
-        var isTrue = tf.answers[j];
-        content += '<p style="margin-left: 20px;"><strong>' + (j+1) + '.</strong> ' + stmt + ' - <span style="color: ' + (isTrue ? 'green' : 'red') + '; font-weight: bold;">' + (isTrue ? 'DUNG' : 'SAI') + '</span></p>';
+    if (exam.questions.true_false && exam.questions.true_false.length > 0) {
+      content += '<h3>PHAN DUNG/SAI</h3>';
+      exam.questions.true_false.forEach(function(tf, i) {
+        content += '<div style="background: #f5f5f5; padding: 15px; margin-bottom: 15px; border-radius: 8px;">';
+        var qNum = exam.questions.multiple_choice ? i + exam.questions.multiple_choice.length + 1 : i + 1;
+        content += '<p><strong>Cau ' + qNum + ':</strong> ' + tf.question + '</p>';
+        tf.statements.forEach(function(stmt, j) {
+          var isTrue = tf.answers[j];
+          content += '<p style="margin-left: 20px;"><strong>' + (j+1) + '.</strong> ' + stmt + ' - <span style="color: ' + (isTrue ? 'green' : 'red') + '; font-weight: bold;">' + (isTrue ? 'DUNG' : 'SAI') + '</span></p>';
+        });
+        content += '</div>';
       });
-      content += '</div>';
-    });
-  } else {
+    }
+    
+    if (exam.type === 'mixed' && exam.questions.essay && exam.questions.essay.length > 0) {
+      content += '<h3>PHAN TU LUAN</h3>';
+      exam.questions.essay.forEach(function(eq, i) {
+        content += '<div style="background: #f5f5f5; padding: 15px; margin-bottom: 15px; border-radius: 8px;">';
+        content += '<p><strong>Cau ' + (i+1) + ':</strong> ' + eq.question + '</p>';
+        content += '<p style="margin-left: 20px; color: #666;"><em>Tieu chi cham:</em> ' + eq.grading_criteria + '</p>';
+        content += '</div>';
+      });
+    }
+  } else if (exam.type === 'essay') {
     content += '<h3>CAU HOI TU LUAN</h3>';
     content += '<div style="background: #f5f5f5; padding: 15px; border-radius: 8px;">';
     content += '<p>' + exam.essay_question + '</p>';

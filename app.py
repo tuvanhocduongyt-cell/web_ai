@@ -1299,7 +1299,12 @@ def load_materials_data():
     if not os.path.exists(MATERIALS_DATA_FILE):
         return []
     with open(MATERIALS_DATA_FILE, 'r', encoding='utf-8') as f:
-        return json.load(f)
+        data = json.load(f)
+        # Đảm bảo luôn trả về list
+        if isinstance(data, dict):
+            return []
+        return data if isinstance(data, list) else []
+
 
 def save_materials_data(data):
     with open(MATERIALS_DATA_FILE, 'w', encoding='utf-8') as f:
@@ -1313,8 +1318,160 @@ def read_word_file(file_path):
     except Exception as e:
         print(f"Loi doc file Word: {e}")
         return ""
+###########
+def auto_grade_essay_with_ai(exam, essay_answer, image_path=None):
+    """Tự động chấm bài tự luận bằng AI"""
+    try:
+        if image_path:
+            img = Image.open(image_path)
+            
+            prompt = f"""
+Ban la giao vien lich su cham bai thi tu luan.
 
-def generate_exam_from_text(text_content, num_multiple, num_truefalse):
+De bai: {exam.get('essay_question', '')}
+
+Tieu chi cham: {exam.get('grading_criteria', 'Cham theo noi dung va logic')}
+
+Hay cham diem bai lam cua hoc sinh trong anh theo thang diem 10.
+
+Phan tich chi tiet:
+1. Diem manh cua bai lam
+2. Diem yeu can cai thien
+3. Cac kien thuc con thieu
+4. Goi y cu the de cai thien
+
+Tra ve JSON (KHONG DUNG DAU # VA **):
+{{
+  "score": <diem so>,
+  "strengths": "<diem manh>",
+  "weaknesses": "<diem yeu>",
+  "missing_knowledge": "<kien thuc thieu>",
+  "improvement_areas": "<dang bai can cai thien>",
+  "suggestions": "<loi khuyen cu the>"
+}}
+
+Chi tra ve JSON, khong them bat ky ky tu nao khac.
+"""
+            response = model.generate_content([img, prompt])
+        else:
+            prompt = f"""
+Ban la giao vien lich su cham bai thi tu luan.
+
+De bai: {exam.get('essay_question', '')}
+
+Tieu chi cham: {exam.get('grading_criteria', 'Cham theo noi dung va logic')}
+
+Bai lam cua hoc sinh: {essay_answer}
+
+Hay cham diem theo thang diem 10 va phan tich chi tiet.
+
+Phan tich chi tiet:
+1. Diem manh cua bai lam
+2. Diem yeu can cai thien
+3. Cac kien thuc con thieu
+4. Goi y cu the de cai thien
+
+Tra ve JSON (KHONG DUNG DAU # VA **):
+{{
+  "score": <diem so>,
+  "strengths": "<diem manh>",
+  "weaknesses": "<diem yeu>",
+  "missing_knowledge": "<kien thuc thieu>",
+  "improvement_areas": "<dang bai can cai thien>",
+  "suggestions": "<loi khuyen cu the>"
+}}
+
+Chi tra ve JSON.
+"""
+            response = model.generate_content(prompt)
+        
+        text = response.text.strip()
+        text = text.replace('```json', '').replace('```', '').strip()
+        result = json.loads(text)
+        return result
+        
+    except Exception as e:
+        print(f"Loi cham AI: {e}")
+        return None
+
+
+def auto_grade_mixed_essay_with_ai(question, grading_criteria, essay_answer, image_path=None, max_score=3):
+    """
+    Chấm từng câu tự luận trong đề hỗn hợp
+    
+    Args:
+        question: Câu hỏi
+        grading_criteria: Tiêu chí chấm
+        essay_answer: Bài làm của học sinh
+        image_path: Đường dẫn ảnh (nếu có)
+        max_score: Điểm tối đa cho câu này ⭐ THÊM THAM SỐ NÀY
+    """
+    try:
+        if image_path:
+            img = Image.open(image_path)
+            
+            prompt = f"""
+Ban la giao vien lich su cham bai.
+
+Cau hoi: {question}
+
+Tieu chi: {grading_criteria}
+
+Hay cham diem bai lam trong anh theo thang diem {max_score}.
+                                                ^^^^^^^^^^^ ⭐ THAY ĐỔI
+
+Tra ve JSON (KHONG DUNG # VA **):
+{{
+  "score": <diem so tren {max_score}, lam tron 2 chu so thap phan>,
+  "analysis": "<phan tich bai lam>",
+  "suggestions": "<loi khuyen cu the>"
+}}
+
+Chi tra ve JSON.
+"""
+            response = model.generate_content([img, prompt])
+        else:
+            prompt = f"""
+Ban la giao vien lich su cham bai.
+
+Cau hoi: {question}
+
+Bai lam: {essay_answer}
+
+Tieu chi: {grading_criteria}
+
+Hay cham diem theo thang diem {max_score}.
+                              ^^^^^^^^^^^ ⭐ THAY ĐỔI
+
+Tra ve JSON (KHONG DUNG # VA **):
+{{
+  "score": <diem so tren {max_score}, lam tron 2 chu so thap phan>,
+  "analysis": "<phan tich bai lam>",
+  "suggestions": "<loi khuyen cu the>"
+}}
+
+Chi tra ve JSON.
+"""
+            response = model.generate_content(prompt)
+        
+        text = response.text.strip()
+        text = text.replace('```json', '').replace('```', '').strip()
+        result = json.loads(text)
+        
+        # ⭐ THÊM VALIDATION ĐỂ ĐẢM BẢO ĐIỂM KHÔNG VƯỢT QUÁ
+        score = float(result.get('score', 0))
+        result['score'] = round(min(max(score, 0), max_score), 2)  # Cap trong [0, max_score]
+        result['max_score'] = max_score  # ⭐ Lưu lại điểm tối đa
+        
+        return result
+        
+    except Exception as e:
+        print(f"Loi cham AI: {e}")
+        return None
+
+# CẬP NHẬT HÀM GENERATE EXAM
+def generate_exam_from_text(text_content, num_multiple, num_truefalse, num_essay=0):
+    """Tạo đề thi từ nội dung văn bản"""
     prompt = f"""
 Du lieu tu file Word:
 {text_content[:3000]}
@@ -1322,6 +1479,7 @@ Du lieu tu file Word:
 Hay tao de thi lich su voi:
 - {num_multiple} cau trac nghiem ABCD
 - {num_truefalse} cau dung sai (moi cau co 4 y)
+{'- ' + str(num_essay) + ' cau tu luan' if num_essay > 0 else ''}
 
 Tra ve JSON voi format:
 {{
@@ -1339,7 +1497,10 @@ Tra ve JSON voi format:
       "answers": [true, false, true, false]
     }}
   ]
+  {"," + '"essay": [{"question": "Cau hoi tu luan", "grading_criteria": "Tieu chi cham chi tiet: Noi dung (4d), Logic (3d), Trieu luan (2d), Truc bach (1d)"}]' if num_essay > 0 else ''}
 }}
+
+CHU Y: Voi cau tu luan, hay tao tieu chi cham RANG RO va CHI TIET de AI co the cham diem khach quan.
 
 Chi tra ve JSON, khong co gi khac.
 """
@@ -1367,6 +1528,8 @@ def login_exam():
             if username in teachers and teachers[username]['password'] == password:
                 session['exam_username'] = username
                 session['exam_role'] = 'teacher'
+                # XÓA return_to vì giáo viên không cần
+                session.pop('return_to', None)
                 return redirect(url_for('dashboard_teacher'))
             else:
                 return render_template('login_exam.html', message="Sai ten dang nhap hoac mat khau")
@@ -1375,7 +1538,13 @@ def login_exam():
             if username in students and students[username]['password'] == password:
                 session['exam_username'] = username
                 session['exam_role'] = 'student'
-                return redirect(url_for('dashboard_student'))
+                
+                # KIỂM TRA CÓ URL TRỞ VỀ KHÔNG
+                return_to = session.pop('return_to', None)
+                if return_to:
+                    return redirect(return_to)
+                else:
+                    return redirect(url_for('dashboard_student'))
             else:
                 return render_template('login_exam.html', message="Sai ten dang nhap hoac mat khau")
     
@@ -1403,6 +1572,129 @@ def register_exam():
     
     return render_template('register_exam.html')
 
+#############
+@app.route('/upload_material', methods=['POST'])
+def upload_material():
+    if 'exam_username' not in session or session.get('exam_role') != 'teacher':
+        return redirect(url_for('login_exam'))
+    
+    title = request.form.get('title')
+    description = request.form.get('description')
+    material_type = request.form.get('material_type')  # 'file' hoặc 'video'
+    grade = request.form.get('grade')  # '10', '11', hoặc '12'
+    
+    materials = load_materials_data()
+    
+    # Đảm bảo materials là list
+    if not isinstance(materials, list):
+        materials = []
+    
+    if material_type == 'file':
+        file = request.files.get('material_file')
+        
+        if file and file.filename:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            
+            materials.append({
+                'id': len(materials) + 1,
+                'title': title,
+                'description': description,
+                'type': 'file',
+                'filename': filename,
+                'grade': grade,
+                'uploaded_by': session['exam_username'],
+                'uploaded_at': datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S")
+            })
+    
+    elif material_type == 'video':
+        video_link = request.form.get('video_link', '').strip()
+        
+        if video_link:
+            # Xử lý link Google Drive để lấy ID
+            drive_id = extract_drive_id(video_link)
+            
+            materials.append({
+                'id': len(materials) + 1,
+                'title': title,
+                'description': description,
+                'type': 'video',
+                'video_link': video_link,
+                'drive_id': drive_id,
+                'grade': grade,
+                'uploaded_by': session['exam_username'],
+                'uploaded_at': datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S")
+            })
+    
+    save_materials_data(materials)
+    return redirect(url_for('dashboard_teacher'))
+
+# Hàm trích xuất ID từ link Google Drive
+def extract_drive_id(link):
+    """
+    Trích xuất ID từ các dạng link Google Drive:
+    - https://drive.google.com/file/d/FILE_ID/view
+    - https://drive.google.com/open?id=FILE_ID
+    """
+    import re
+    
+    # Dạng /file/d/FILE_ID/
+    match = re.search(r'/file/d/([a-zA-Z0-9_-]+)', link)
+    if match:
+        return match.group(1)
+    
+    # Dạng ?id=FILE_ID
+    match = re.search(r'[?&]id=([a-zA-Z0-9_-]+)', link)
+    if match:
+        return match.group(1)
+    
+    # Nếu không match, trả về link gốc
+    return link
+
+# Route xem tài liệu theo lớp
+@app.route('/materials/<grade>')
+def view_materials_by_grade(grade):
+    if 'exam_username' not in session:
+        return redirect(url_for('login_exam'))
+    
+    if grade not in ['10', '11', '12', 'all']:
+        return "Lớp không hợp lệ", 400
+    
+    materials = load_materials_data()
+    
+    if grade == 'all':
+        filtered_materials = materials
+    else:
+        filtered_materials = [m for m in materials if m.get('grade') == grade]
+    
+    return render_template('materials_list.html', 
+                         materials=filtered_materials, 
+                         grade=grade)
+
+# Route xóa tài liệu (chỉ giáo viên)
+@app.route('/delete_material/<int:material_id>', methods=['POST'])
+def delete_material(material_id):
+    if 'exam_username' not in session or session.get('exam_role') != 'teacher':
+        return redirect(url_for('login_exam'))
+    
+    materials = load_materials_data()
+    
+    # Đảm bảo materials là list
+    if not isinstance(materials, list):
+        materials = []
+    
+    # Tìm và xóa tài liệu
+    materials = [m for m in materials if m.get('id') != material_id]
+    
+    # Cập nhật lại ID
+    for idx, material in enumerate(materials):
+        material['id'] = idx + 1
+    
+    save_materials_data(materials)
+    return redirect(url_for('dashboard_teacher'))
+
+# Cập nhật route dashboard_teacher
 @app.route('/dashboard_teacher')
 def dashboard_teacher():
     if 'exam_username' not in session or session.get('exam_role') != 'teacher':
@@ -1412,11 +1704,20 @@ def dashboard_teacher():
     materials = load_materials_data()
     submissions = load_exam_submissions()
     
+    # Phân loại tài liệu theo lớp
+    materials_by_grade = {
+        '10': [m for m in materials if m.get('grade') == '10'],
+        '11': [m for m in materials if m.get('grade') == '11'],
+        '12': [m for m in materials if m.get('grade') == '12']
+    }
+    
     return render_template('dashboard_teacher.html', 
                          exams=exams, 
                          materials=materials,
+                         materials_by_grade=materials_by_grade,
                          submissions=submissions)
 
+# Cập nhật route dashboard_student
 @app.route('/dashboard_student')
 def dashboard_student():
     if 'exam_username' not in session or session.get('exam_role') != 'student':
@@ -1429,10 +1730,19 @@ def dashboard_student():
     
     my_submissions = [s for s in submissions if s['student'] == username]
     
+    # Phân loại tài liệu theo lớp
+    materials_by_grade = {
+        '10': [m for m in materials if m.get('grade') == '10'],
+        '11': [m for m in materials if m.get('grade') == '11'],
+        '12': [m for m in materials if m.get('grade') == '12']
+    }
+    
     return render_template('dashboard_student.html', 
                          exams=exams, 
                          materials=materials,
+                         materials_by_grade=materials_by_grade,
                          my_submissions=my_submissions)
+#######################
 
 @app.route('/create_exam', methods=['GET', 'POST'])
 def create_exam():
@@ -1441,10 +1751,13 @@ def create_exam():
     
     if request.method == 'POST':
         exam_type = request.form.get('exam_type')
+        exam_id = datetime.now(vn_timezone).strftime("%Y%m%d%H%M%S")
+        grade = request.form.get('grade')
+        
+        # LẤY TIÊU CHÍ CHẤM TỔNG THỂ
+        general_grading_criteria = request.form.get('general_grading_criteria', '').strip()
         
         if exam_type == 'multiple_choice':
-            exam_id = datetime.now(vn_timezone).strftime("%Y%m%d%H%M%S")
-            
             word_file = request.files.get('word_file')
             if word_file and word_file.filename.endswith('.docx'):
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], word_file.filename)
@@ -1467,13 +1780,56 @@ def create_exam():
                         'created_by': session['exam_username'],
                         'created_at': datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S"),
                         'questions': exam_data,
-                        'total_score': 10
+                        'total_score': 10,
+                        'grade': grade,
+                        'tf_grading_method': 'deduction',
+                        'general_grading_criteria': general_grading_criteria  # THÊM
+                    }
+                    save_exams_data(exams)
+                    return redirect(url_for('dashboard_teacher'))
+        
+        elif exam_type == 'mixed':
+            word_file = request.files.get('word_file')
+            if word_file and word_file.filename.endswith('.docx'):
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], word_file.filename)
+                word_file.save(file_path)
+                
+                text_content = read_word_file(file_path)
+                
+                num_multiple = int(request.form.get('num_multiple', 5))
+                num_truefalse = int(request.form.get('num_truefalse', 3))
+                num_essay = int(request.form.get('num_essay', 1))
+                
+                exam_data = generate_exam_from_text(text_content, num_multiple, num_truefalse, num_essay)
+                
+                # CHO PHÉP GIÁO VIÊN CHỈNH SỬA TIÊU CHÍ TỪNG CÂU TỰ LUẬN
+                if exam_data and 'essay' in exam_data:
+                    for i, eq in enumerate(exam_data['essay']):
+                        custom_criteria = request.form.get(f'essay_criteria_{i}', '').strip()
+                        if custom_criteria:
+                            eq['grading_criteria'] = custom_criteria
+                
+                if exam_data:
+                    exams = load_exams_data()
+                    exams[exam_id] = {
+                        'id': exam_id,
+                        'title': request.form.get('title'),
+                        'type': 'mixed',
+                        'duration': int(request.form.get('duration', 90)),
+                        'created_by': session['exam_username'],
+                        'created_at': datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S"),
+                        'questions': exam_data,
+                        'total_score': 10,
+                        'grade': grade,
+                        'tf_grading_method': request.form.get('tf_grading_method', 'deduction'),
+                        'general_grading_criteria': general_grading_criteria  # THÊM
                     }
                     save_exams_data(exams)
                     return redirect(url_for('dashboard_teacher'))
             
         elif exam_type == 'essay':
-            exam_id = datetime.now(vn_timezone).strftime("%Y%m%d%H%M%S")
+            essay_question = request.form.get('essay_question')
+            grading_criteria = request.form.get('grading_criteria')
             
             exams = load_exams_data()
             exams[exam_id] = {
@@ -1483,15 +1839,111 @@ def create_exam():
                 'duration': int(request.form.get('duration', 90)),
                 'created_by': session['exam_username'],
                 'created_at': datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S"),
-                'essay_question': request.form.get('essay_question'),
-                'grading_criteria': request.form.get('grading_criteria'),
-                'total_score': 10
+                'essay_question': essay_question,
+                'grading_criteria': grading_criteria,
+                'total_score': 10,
+                'grade': grade,
+                'general_grading_criteria': general_grading_criteria  # THÊM
             }
             save_exams_data(exams)
             return redirect(url_for('dashboard_teacher'))
     
     return render_template('create_exam.html')
-##############
+############## sửa
+def analyze_wrong_answers(exam, mc_wrong):
+    """AI đưa ra kế hoạch ôn tập và chủ đề liên quan"""
+    try:
+        if not mc_wrong:
+            return None
+        
+        errors_text = ""
+        for idx, item in enumerate(mc_wrong):
+            q = item['question']
+            errors_text += f"\nCau {idx + 1}: {q['question']}\n"
+            errors_text += f"  Dap an dung: {q['answer']}\n"
+            errors_text += f"  Hoc sinh chon: {item['user_answer']}\n"
+        
+        prompt = f"""
+Ban la giao vien lich su, hay phan tich cac loi sai cua hoc sinh trong de thi trac nghiem.
+
+Cac loi sai:
+{errors_text}
+
+Hay dua ra:
+1. KE HOACH ON TAP: Lap so do tu duy hoac bang bieu tong hop cac su kien lich su lon, bao gom: ten su kien, thoi gian, dia diem, nhan vat lanh dao, nguyen nhan (sau xa, truc tiep), dien bien chinh, ket qua, y nghia, tinh chat, va han che. Danh thoi gian on tap va phan biet ro rang cac khai niem de nham lan. Tap trung vao chi tiet: Luyen tap ghi nho cac chi tiet nhu nien dai, ten goi cu the cua cac khoi lien minh, quoc gia lien quan den su kien. Doc hieu sau: Doc ky cac cau hoi trac nghiem, phan tich tung lua chon de tim ra dap an toi uu nhat, tranh chon dap an dung nhung chua du hoac chua phai la 'nhat'. Luyen tap giai de: Thuc hanh lam nhieu bai tap trac nghiem, sau do tu cham va phan tich ly luong cac loi sai, ghi lai ly do sai de tranh lap lai.
+
+2. CAC CHU DE LIEN QUAN: Chu nghia de quoc va su phan chia the gioi cuoi the ky XIX - dau the ky XX. Chien tranh the gioi thu nhat (1914-1918): Nguyen nhan, dien bien, ket qua, tinh chat, tac dong. Cach mang thang Muoi Nga (1917) va cong cuoc xay dung chu nghia xa hoi o Lien Xo nhung nam 1920-1930. Phong trao giai phong dan toc o chau A, chau Phi, My Latinh dau the ky XX (dien hinh: Duy tan Minh Tri o Nhat Ban, Cach mang Tan Hoi o Trung Quoc, phong trao o An Do, Dong Nam A).
+
+Tra ve JSON (KHONG DUNG # VA **):
+{{
+  "ke_hoach_on_tap": "<Ke hoach on tap cu the>",
+  "cac_chu_de_lien_quan": "<Cac chu de can on them>"
+}}
+
+Chi tra ve JSON.
+"""
+        
+        response = model.generate_content(prompt)
+        text = response.text.strip()
+        text = text.replace('```json', '').replace('```', '').strip()
+        result = json.loads(text)
+        return result
+        
+    except Exception as e:
+        print(f"Loi phan tich: {e}")
+        return None
+
+
+def analyze_truefalse_errors(exam, tf_errors):
+    """AI đưa ra kế hoạch ôn tập và chủ đề liên quan cho câu đúng/sai"""
+    try:
+        if not tf_errors:
+            return None
+        
+        errors_text = ""
+        for idx, item in enumerate(tf_errors):
+            tf = item['question']
+            errors_text += f"\nCau {idx + 1}: {tf['question']}\n"
+            for j, stmt in enumerate(tf['statements']):
+                correct = "DUNG" if tf['answers'][j] else "SAI"
+                user = "DUNG" if item['user_answers'][j] else "SAI"
+                if tf['answers'][j] != item['user_answers'][j]:
+                    errors_text += f"  Y {j+1}: {stmt}\n"
+                    errors_text += f"    Dap an dung: {correct}\n"
+                    errors_text += f"    Hoc sinh chon: {user}\n"
+        
+        prompt = f"""
+Ban la giao vien lich su, hay phan tich cac loi sai cua hoc sinh trong cau dung/sai.
+
+Cac loi sai:
+{errors_text}
+
+Hay dua ra:
+1. KE HOACH ON TAP: Lap so do tu duy hoac bang bieu tong hop cac su kien lich su lon, bao gom: ten su kien, thoi gian, dia diem, nhan vat lanh dao, nguyen nhan (sau xa, truc tiep), dien bien chinh, ket qua, y nghia, tinh chat, va han che. Danh thoi gian on tap va phan biet ro rang cac khai niem de nham lan. Tap trung vao chi tiet: Luyen tap ghi nho cac chi tiet nhu nien dai, ten goi cu the cua cac khoi lien minh, quoc gia lien quan den su kien. Doc hieu sau: Doc ky cac cau hoi trac nghiem, phan tich tung lua chon de tim ra dap an toi uu nhat, tranh chon dap an dung nhung chua du hoac chua phai la 'nhat'. Luyen tap giai de: Thuc hanh lam nhieu bai tap trac nghiem, sau do tu cham va phan tich ly luong cac loi sai, ghi lai ly do sai de tranh lap lai.
+
+2. CAC CHU DE LIEN QUAN: Chu nghia de quoc va su phan chia the gioi cuoi the ky XIX - dau the ky XX. Chien tranh the gioi thu nhat (1914-1918): Nguyen nhan, dien bien, ket qua, tinh chat, tac dong. Cach mang thang Muoi Nga (1917) va cong cuoc xay dung chu nghia xa hoi o Lien Xo nhung nam 1920-1930. Phong trao giai phong dan toc o chau A, chau Phi, My Latinh dau the ky XX (dien hinh: Duy tan Minh Tri o Nhat Ban, Cach mang Tan Hoi o Trung Quoc, phong trao o An Do, Dong Nam A).
+
+Tra ve JSON (KHONG DUNG # VA **):
+{{
+  "ke_hoach_on_tap": "<Ke hoach on tap cu the>",
+  "cac_chu_de_lien_quan": "<Cac chu de can on them>"
+}}
+
+Chi tra ve JSON.
+"""
+        
+        response = model.generate_content(prompt)
+        text = response.text.strip()
+        text = text.replace('```json', '').replace('```', '').strip()
+        result = json.loads(text)
+        return result
+        
+    except Exception as e:
+        print(f"Loi phan tich TF: {e}")
+        return None
+
+# CẬP NHẬT ROUTE do_exam
+# ROUTE LÀM BÀI THI
 @app.route('/do_exam/<exam_id>', methods=['GET', 'POST'])
 def do_exam(exam_id):
     if 'exam_username' not in session or session.get('exam_role') != 'student':
@@ -1507,63 +1959,203 @@ def do_exam(exam_id):
         username = session['exam_username']
         submissions = load_exam_submissions()
         
-        # ✅ THÊM DÒNG NÀY ĐỂ ĐẢM BẢO submissions LÀ LIST
         if not isinstance(submissions, list):
             submissions = []
         
-        if exam['type'] == 'multiple_choice':
+        # ============================================
+        # ĐỀ THI TRẮC NGHIỆM HOẶC HỖN HỢP
+        # ============================================
+        if exam['type'] == 'multiple_choice' or exam['type'] == 'mixed':
             score = 0
-            total_questions = len(exam['questions']['multiple_choice']) + len(exam['questions']['true_false'])
-            
-            score_per_mc = (10 * 0.6) / len(exam['questions']['multiple_choice']) if len(exam['questions']['multiple_choice']) > 0 else 0
-            score_per_tf = (10 * 0.4) / len(exam['questions']['true_false']) if len(exam['questions']['true_false']) > 0 else 0
-            
             answers = {}
             
-            for i, q in enumerate(exam['questions']['multiple_choice']):
-                user_answer = request.form.get(f'mc_{i}')
-                answers[f'mc_{i}'] = user_answer
-                if user_answer == q['answer']:
-                    score += score_per_mc
+            mc_questions = exam['questions'].get('multiple_choice', [])
+            tf_questions = exam['questions'].get('true_false', [])
+            essay_questions = exam['questions'].get('essay', [])
             
-            for i, tf in enumerate(exam['questions']['true_false']):
-                user_answers = []
-                wrong_count = 0
-                for j in range(4):
-                    user_tf = request.form.get(f'tf_{i}_{j}') == 'true'
-                    user_answers.append(user_tf)
-                    if user_tf != tf['answers'][j]:
-                        wrong_count += 1
-                
-                answers[f'tf_{i}'] = user_answers
-                
-                if wrong_count == 0:
-                    score += score_per_tf
-                elif wrong_count == 1:
-                    score += score_per_tf - 0.5
-                elif wrong_count == 2:
-                    score += 0.25
-                elif wrong_count == 3:
-                    score += 0.1
+            # DANH SÁCH CÂU SAI
+            mc_wrong = []
+            tf_errors = []
             
+            # PHÂN BỔ ĐIỂM
+            if exam['type'] == 'mixed':
+                mc_total = 4
+                tf_total = 3
+                essay_total = 3
+            else:
+                mc_total = 6
+                tf_total = 4
+                essay_total = 0
+            
+            # ============================================
+            # CHẤM TRẮC NGHIỆM
+            # ============================================
+            if mc_questions:
+                score_per_mc = mc_total / len(mc_questions)
+                for i, q in enumerate(mc_questions):
+                    user_answer = request.form.get(f'mc_{i}')
+                    answers[f'mc_{i}'] = user_answer
+                    if user_answer == q['answer']:
+                        score += score_per_mc
+                    else:
+                        mc_wrong.append({
+                            'question': q,
+                            'user_answer': user_answer if user_answer else 'Khong tra loi'
+                        })
+            
+            # ============================================
+            # CHẤM ĐÚNG/SAI
+            # ============================================
+            grading_method = exam.get('tf_grading_method', 'deduction')
+            
+            if tf_questions:
+                score_per_tf = tf_total / len(tf_questions)
+                
+                for i, tf in enumerate(tf_questions):
+                    user_answers = []
+                    correct_count = 0
+                    wrong_count = 0
+                    has_error = False
+                    
+                    for j in range(4):
+                        user_tf = request.form.get(f'tf_{i}_{j}') == 'true'
+                        user_answers.append(user_tf)
+                        if user_tf == tf['answers'][j]:
+                            correct_count += 1
+                        else:
+                            wrong_count += 1
+                            has_error = True
+                    
+                    answers[f'tf_{i}'] = user_answers
+                    
+                    if has_error:
+                        tf_errors.append({
+                            'question': tf,
+                            'user_answers': user_answers
+                        })
+                    
+                    # CHẤM ĐIỂM THEO PHƯƠNG PHÁP
+                    if grading_method == 'deduction':
+                        if wrong_count == 0:
+                            score += score_per_tf
+                        elif wrong_count == 1:
+                            score += score_per_tf * 0.75  # ⭐ FIXED: Trừ 25%
+                        elif wrong_count == 2:
+                            score += score_per_tf * 0.5   # ⭐ FIXED: Trừ 50%
+                        elif wrong_count == 3:
+                            score += score_per_tf * 0.25  # ⭐ FIXED: Trừ 75%
+                        # Sai 4 ý = 0 điểm
+                    else:  # proportional
+                        score += (correct_count / 4) * score_per_tf  # ⭐ FIXED
+            
+            # ============================================
+            # PHÂN TÍCH AI CHO CÂU SAI (TRẮC NGHIỆM & ĐÚNG/SAI)
+            # ============================================
+            mc_feedback = None
+            tf_feedback = None
+            
+            if mc_wrong:
+                mc_feedback = analyze_wrong_answers(exam, mc_wrong)
+                if not mc_feedback:
+                    mc_feedback = {
+                        'ke_hoach_on_tap': 'Hệ thống AI tạm thời không khả dụng. Vui lòng liên hệ giáo viên.',
+                        'cac_chu_de_lien_quan': ''
+                    }
+            
+            if tf_errors:
+                tf_feedback = analyze_truefalse_errors(exam, tf_errors)
+                if not tf_feedback:
+                    tf_feedback = {
+                        'ke_hoach_on_tap': 'Hệ thống AI tạm thời không khả dụng. Vui lòng liên hệ giáo viên.',
+                        'cac_chu_de_lien_quan': ''
+                    }
+            
+            # ============================================
+            # XỬ LÝ TỰ LUẬN - CHẤM AI NGAY
+            # ============================================
+            essay_ai_feedback = []
+            if essay_questions and exam['type'] == 'mixed':
+                essay_answers = []
+                total_essay_score = 0
+                
+                # ⭐ TÍNH ĐIỂM TỐI ĐA CHO MỖI CÂU TỰ LUẬN
+                score_per_essay = essay_total / len(essay_questions)
+                
+                for i, eq in enumerate(essay_questions):
+                    essay_answer = request.form.get(f'essay_{i}', '').strip()
+                    image_file = request.files.get(f'essay_image_{i}')
+                    
+                    image_path = None
+                    if image_file and image_file.filename:
+                        import time
+                        timestamp = int(time.time())
+                        image_filename = secure_filename(f"{exam_id}_{username}_{i}_{timestamp}_{image_file.filename}")
+                        image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
+                        image_file.save(image_path)
+                    
+                    essay_answers.append({
+                        'text': essay_answer,
+                        'image_path': image_path
+                    })
+                    
+                    # ⭐ TRUYỀN max_score VÀO HÀM AI
+                    ai_result = auto_grade_mixed_essay_with_ai(
+                        eq['question'],
+                        eq.get('grading_criteria', 'Cham theo noi dung'),
+                        essay_answer,
+                        image_path,
+                        max_score=score_per_essay  # ⭐ ĐIỂM TỐI ĐA CHO CÂU NÀY
+                    )
+                    
+                    if ai_result:
+                        essay_ai_feedback.append(ai_result)
+                        total_essay_score += ai_result['score']
+                    else:
+                        essay_ai_feedback.append({
+                            'score': 0,
+                            'max_score': score_per_essay,
+                            'analysis': 'AI không thể chấm được bài',
+                            'suggestions': 'Cần giáo viên xem xét và chấm lại'
+                        })
+                
+                answers['essay'] = essay_answers
+                score += total_essay_score
+            
+            # ============================================
+            # LƯU BÀI NỘP
+            # ============================================
             submission = {
                 'exam_id': exam_id,
                 'student': username,
                 'submitted_at': datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S"),
                 'answers': answers,
                 'score': round(score, 2),
-                'type': 'multiple_choice'
+                'type': exam['type'],
+                'ai_graded': True,
+                'essay_ai_feedback': essay_ai_feedback if essay_questions else None,
+                'mc_ai_feedback': mc_feedback,
+                'tf_ai_feedback': tf_feedback,
+                'teacher_adjusted': False,
+                'teacher_score': None,
+                'teacher_comment': None
             }
-            
+        
+        # ============================================
+        # ĐỀ THI TỰ LUẬN THUẦN
+        # ============================================
         elif exam['type'] == 'essay':
             essay_answer = request.form.get('essay_answer', '').strip()
             image_file = request.files.get('essay_image')
             
             image_path = None
             if image_file and image_file.filename:
-                image_filename = secure_filename(image_file.filename)
+                import time
+                timestamp = int(time.time())
+                image_filename = secure_filename(f"{exam_id}_{username}_{timestamp}_{image_file.filename}")
                 image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
                 image_file.save(image_path)
+            
+            ai_feedback = auto_grade_essay_with_ai(exam, essay_answer, image_path)
             
             submission = {
                 'exam_id': exam_id,
@@ -1571,123 +2163,79 @@ def do_exam(exam_id):
                 'submitted_at': datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S"),
                 'essay_answer': essay_answer,
                 'image_path': image_path,
-                'score': None,
+                'score': ai_feedback['score'] if ai_feedback else None,
                 'type': 'essay',
-                'graded': False
+                'ai_graded': True,
+                'ai_feedback': ai_feedback,
+                'teacher_adjusted': False,
+                'teacher_score': None,
+                'teacher_comment': None
             }
         
+        # ============================================
+        # LƯU VÀ CHUYỂN HƯỚNG
+        # ============================================
         submissions.append(submission)
         save_exam_submissions(submissions)
         
         return redirect(url_for('dashboard_student'))
     
+    # GET REQUEST - HIỂN THỊ ĐỀ THI
     return render_template('do_exam.html', exam=exam, exam_id=exam_id)
 
-@app.route('/grade_essay/<int:submission_index>', methods=['POST'])
-def grade_essay(submission_index):
+@app.route('/adjust_score/<int:submission_index>', methods=['POST'])
+def adjust_score(submission_index):
+    """Giáo viên điều chỉnh điểm AI"""
     if 'exam_username' not in session or session.get('exam_role') != 'teacher':
+        flash("Bạn cần đăng nhập với quyền giáo viên", "error")
         return redirect(url_for('login_exam'))
     
     submissions = load_exam_submissions()
     
     if submission_index >= len(submissions):
-        return "Khong tim thay bai nop", 404
+        flash("Không tìm thấy bài nộp", "error")
+        return redirect(url_for('dashboard_teacher'))
     
     submission = submissions[submission_index]
     
-    if submission['type'] != 'essay':
-        return "Khong phai bai tu luan", 400
+    # Lấy điểm và nhận xét từ giáo viên
+    teacher_score = request.form.get('teacher_score')
+    teacher_comment = request.form.get('teacher_comment', '').strip()
     
-    exams = load_exams_data()
-    exam = exams.get(submission['exam_id'])
+    # LOGGING
+    print(f"[ADJUST SCORE] Index: {submission_index}")
+    print(f"[ADJUST SCORE] Submission type: {submission.get('type')}")
+    print(f"[ADJUST SCORE] AI score: {submission.get('score')}")
+    print(f"[ADJUST SCORE] New teacher score: {teacher_score}")
+    print(f"[ADJUST SCORE] Comment: {teacher_comment[:50] if teacher_comment else 'None'}")
     
-    if submission.get('image_path'):
-        try:
-            img = Image.open(submission['image_path'])
-            
-            prompt = f"""
-De bai: {exam['essay_question']}
-
-Tieu chi cham: {exam['grading_criteria']}
-
-Hay cham diem bai lam cua hoc sinh trong anh theo thang diem 10.
-Tra ve JSON:
-{{
-  "score": <diem so>,
-  "feedback": "<nhan xet chi tiet>"
-}}
-Chi tra ve JSON.
-"""
-            response = model.generate_content([img, prompt])
-            text = response.text.strip()
-            text = text.replace('```json', '').replace('```', '').strip()
-            result = json.loads(text)
-            
-            submissions[submission_index]['score'] = result['score']
-            submissions[submission_index]['feedback'] = result['feedback']
-            submissions[submission_index]['graded'] = True
-            
-        except Exception as e:
-            print(f"Loi cham bai: {e}")
-            return "Loi cham bai", 500
-    else:
-        prompt = f"""
-De bai: {exam['essay_question']}
-
-Tieu chi cham: {exam['grading_criteria']}
-
-Bai lam cua hoc sinh: {submission['essay_answer']}
-
-Hay cham diem theo thang diem 10.
-Tra ve JSON:
-{{
-  "score": <diem so>,
-  "feedback": "<nhan xet chi tiet>"
-}}
-Chi tra ve JSON.
-"""
-        try:
-            response = model.generate_content(prompt)
-            text = response.text.strip()
-            text = text.replace('```json', '').replace('```', '').strip()
-            result = json.loads(text)
-            
-            submissions[submission_index]['score'] = result['score']
-            submissions[submission_index]['feedback'] = result['feedback']
-            submissions[submission_index]['graded'] = True
-            
-        except Exception as e:
-            print(f"Loi cham bai: {e}")
-            return "Loi cham bai", 500
-    
-    save_exam_submissions(submissions)
-    return redirect(url_for('dashboard_teacher'))
-
-@app.route('/upload_material', methods=['POST'])
-def upload_material():
-    if 'exam_username' not in session or session.get('exam_role') != 'teacher':
-        return redirect(url_for('login_exam'))
-    
-    title = request.form.get('title')
-    description = request.form.get('description')
-    file = request.files.get('material_file')
-    
-    if file and file.filename:
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(file_path)
+    if teacher_score:
+        # LƯU ĐIỂM AI GỐC (nếu chưa có)
+        if 'original_ai_score' not in submissions[submission_index]:
+            submissions[submission_index]['original_ai_score'] = submission.get('score')
         
-        materials = load_materials_data()
-        materials.append({
-            'title': title,
-            'description': description,
-            'filename': filename,
-            'uploaded_by': session['exam_username'],
-            'uploaded_at': datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S")
-        })
-        save_materials_data(materials)
+        # CẬP NHẬT ĐIỂM VÀ NHẬN XÉT
+        submissions[submission_index]['teacher_score'] = float(teacher_score)
+        submissions[submission_index]['teacher_adjusted'] = True
+        submissions[submission_index]['teacher_comment'] = teacher_comment
+        submissions[submission_index]['score'] = float(teacher_score)  # Điểm chính thức
+        submissions[submission_index]['adjusted_at'] = datetime.now(vn_timezone).strftime("%Y-%m-%d %H:%M:%S")
+        
+        # LƯU VÀO FILE
+        save_exam_submissions(submissions)
+        
+        print(f"[ADJUST SCORE] ✓ Saved successfully!")
+        print(f"[ADJUST SCORE] Final score: {submissions[submission_index]['score']}")
+        
+        flash(f"✓ Đã điều chỉnh điểm thành công! Điểm mới: {teacher_score}/10", "success")
+    else:
+        flash("⚠️ Vui lòng nhập điểm hợp lệ", "warning")
     
+    # REDIRECT VỀ DASHBOARD_TEACHER THAY VÌ VIEW_SUBMISSION
+    # Tránh vòng lặp redirect hoặc cache
     return redirect(url_for('dashboard_teacher'))
+
+####
 
 @app.route('/download_material/<filename>')
 def download_material(filename):
@@ -1728,6 +2276,8 @@ def exam_statistics():
     return render_template('exam_statistics.html', stats=stats)
 
 ############
+# THAY THẾ ROUTE adjust_score VÀ view_submission HIỆN TẠI
+
 @app.route('/view_submission/<int:submission_index>')
 def view_submission(submission_index):
     if 'exam_username' not in session:
@@ -1736,24 +2286,38 @@ def view_submission(submission_index):
     submissions = load_exam_submissions()
     
     if submission_index >= len(submissions):
-        return "Khong tim thay bai nop", 404
+        flash("Không tìm thấy bài nộp", "error")
+        return redirect(url_for('dashboard_teacher'))
     
     submission = submissions[submission_index]
     
-    # Kiểm tra quyền xem (chỉ học sinh của bài hoặc giáo viên)
+    # Kiểm tra quyền xem
     if session.get('exam_role') == 'student' and submission['student'] != session['exam_username']:
-        return "Ban khong co quyen xem bai nay", 403
+        flash("Bạn không có quyền xem bài này", "error")
+        return redirect(url_for('dashboard_student'))
     
     exams = load_exams_data()
     exam = exams.get(submission['exam_id'])
     
     if not exam:
-        return "Khong tim thay de thi", 404
+        flash("Không tìm thấy đề thi", "error")
+        return redirect(url_for('dashboard_teacher'))
+    
+    # LƯU ĐIỂM AI GỐC (nếu chưa có)
+    if 'original_ai_score' not in submission:
+        submission['original_ai_score'] = submission.get('score')
+    
+    # LOGGING
+    print(f"[VIEW SUBMISSION] Index: {submission_index}")
+    print(f"[VIEW SUBMISSION] Type: {submission.get('type')}")
+    print(f"[VIEW SUBMISSION] Score: {submission.get('score')}")
+    print(f"[VIEW SUBMISSION] Teacher adjusted: {submission.get('teacher_adjusted')}")
     
     return render_template('view_submission.html', 
                          submission=submission, 
                          exam=exam,
                          submission_index=submission_index)
+
 ##########################
 
 @app.route('/logout_exam')
@@ -1762,6 +2326,9 @@ def logout_exam():
     session.pop('exam_role', None)
     return redirect(url_for('login_exam'))
 #####
-
+@app.template_filter('enumerate')
+def enumerate_filter(iterable, start=0):
+    return enumerate(iterable, start)
+###
 if __name__ == '__main__':
     app.run(debug=True, threaded=True)
