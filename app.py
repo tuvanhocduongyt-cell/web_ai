@@ -2277,7 +2277,6 @@ def exam_statistics():
 
 ############
 # THAY THẾ ROUTE adjust_score VÀ view_submission HIỆN TẠI
-
 @app.route('/view_submission/<int:submission_index>')
 def view_submission(submission_index):
     if 'exam_username' not in session:
@@ -2303,6 +2302,40 @@ def view_submission(submission_index):
         flash("Không tìm thấy đề thi", "error")
         return redirect(url_for('dashboard_teacher'))
     
+    # ========== CHUẨN HÓA CẤU TRÚC EXAM ==========
+    print(f"[DEBUG] exam type: {type(exam)}")
+    print(f"[DEBUG] exam keys: {exam.keys()}")
+    print(f"[DEBUG] exam data: {exam}")
+    
+    # Nếu exam không có 'questions', tạo từ cấu trúc cũ
+    if 'questions' not in exam:
+        print("[INFO] Converting old exam structure to new format")
+        
+        # Đây là đề tự luận thuần
+        if exam.get('type') == 'essay' and 'essay_question' in exam:
+            exam['questions'] = {
+                'multiple_choice': [],
+                'true_false': [],
+                'essay': [{
+                    'question': exam['essay_question']
+                }]
+            }
+        # Đây là đề trắc nghiệm/hỗn hợp cũ (nếu có)
+        else:
+            exam['questions'] = {
+                'multiple_choice': exam.get('multiple_choice', []),
+                'true_false': exam.get('true_false', []),
+                'essay': exam.get('essay', [])
+            }
+    
+    # Đảm bảo các sub-keys tồn tại
+    if 'multiple_choice' not in exam['questions']:
+        exam['questions']['multiple_choice'] = []
+    if 'true_false' not in exam['questions']:
+        exam['questions']['true_false'] = []
+    if 'essay' not in exam['questions']:
+        exam['questions']['essay'] = []
+    
     # LƯU ĐIỂM AI GỐC (nếu chưa có)
     if 'original_ai_score' not in submission:
         submission['original_ai_score'] = submission.get('score')
@@ -2312,6 +2345,7 @@ def view_submission(submission_index):
     print(f"[VIEW SUBMISSION] Type: {submission.get('type')}")
     print(f"[VIEW SUBMISSION] Score: {submission.get('score')}")
     print(f"[VIEW SUBMISSION] Teacher adjusted: {submission.get('teacher_adjusted')}")
+    print(f"[VIEW SUBMISSION] Questions structure: MC={len(exam['questions']['multiple_choice'])}, TF={len(exam['questions']['true_false'])}, Essay={len(exam['questions']['essay'])}")
     
     return render_template('view_submission.html', 
                          submission=submission, 
