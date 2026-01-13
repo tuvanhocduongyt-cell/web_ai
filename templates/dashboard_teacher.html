@@ -1,7 +1,7 @@
 <!-- templates/dashboard_teacher.html -->
 {% extends "layout.html" %}
 
-{% block title %}Trang giao vien{% endblock %}
+{% block title %}Trang giáo viên{% endblock %}
 
 {% block content %}
 <style>
@@ -159,61 +159,61 @@
   }
 </style>
 
-<h2>TRANG GIAO VIEN</h2>
+<h2>TRANG GIÁO VIÊN</h2>
 
 <p style="text-align: right; margin-bottom: 20px;">
-  Xin chao, <strong>{{ session['exam_username'] }}</strong> | 
-  <a href="{{ url_for('logout_exam') }}">Dang xuat</a>
+  Xin chào, <strong>{{ session['exam_username'] }}</strong> | 
+  <a href="{{ url_for('logout_exam') }}">Đăng xuất</a>
 </p>
 
 <div style="margin-bottom: 30px;">
-  <h3 style="color: #00796b;">QUAN LY</h3>
+  <h3 style="color: #00796b;">QUẢN LÝ</h3>
   <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-    <a href="{{ url_for('create_exam') }}" style="display: inline-block; padding: 12px 24px; background-color: #009688; color: white; border-radius: 8px; text-decoration: none;">Tao de thi moi</a>
-    <a href="{{ url_for('exam_statistics') }}" style="display: inline-block; padding: 12px 24px; background-color: #0288d1; color: white; border-radius: 8px; text-decoration: none;">Thong ke hoc sinh</a>
-    <button onclick="document.getElementById('uploadMaterialForm').style.display='block'" style="padding: 12px 24px; background-color: #f57c00;">Dang tai lieu</button>
+    <a href="{{ url_for('create_exam') }}" style="display: inline-block; padding: 12px 24px; background-color: #009688; color: white; border-radius: 8px; text-decoration: none;">Tạo đề thi mới</a>
+    <a href="{{ url_for('exam_statistics') }}" style="display: inline-block; padding: 12px 24px; background-color: #0288d1; color: white; border-radius: 8px; text-decoration: none;">Thống kê học sinh</a>
+    <button onclick="document.getElementById('uploadMaterialForm').style.display='block'" style="padding: 12px 24px; background-color: #f57c00;">Đăng tài liệu</button>
   </div>
 </div>
 
 <!-- Form Upload Tài Liệu -->
 <div id="uploadMaterialForm" style="display: none; background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-  <h4 style="margin-top: 0;">📚 Dang tai lieu bai giang</h4>
+  <h4 style="margin-top: 0;">📚 Đăng tài liệu bài giảng</h4>
   <form method="POST" action="{{ url_for('upload_material') }}" enctype="multipart/form-data">
     
     <div style="margin-bottom: 15px;">
-      <label style="display: block; margin-bottom: 5px; font-weight: 600;">Tieu de:</label>
+      <label style="display: block; margin-bottom: 5px; font-weight: 600;">Tiêu đề:</label>
       <input type="text" name="title" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
     </div>
     
     <div style="margin-bottom: 15px;">
-      <label style="display: block; margin-bottom: 5px; font-weight: 600;">Mo ta:</label>
+      <label style="display: block; margin-bottom: 5px; font-weight: 600;">Mô tả:</label>
       <textarea name="description" rows="3" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;"></textarea>
     </div>
     
     <div style="margin-bottom: 15px;">
-      <label style="display: block; margin-bottom: 5px; font-weight: 600;">Chon lop:</label>
+      <label style="display: block; margin-bottom: 5px; font-weight: 600;">Chọn lớp:</label>
       <select name="grade" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
-        <option value="">-- Chon lop --</option>
-        <option value="10">📘 Lop 10</option>
-        <option value="11">📗 Lop 11</option>
-        <option value="12">📕 Lop 12</option>
+        <option value="">-- Chọn lớp --</option>
+        <option value="10">📘 Lớp 10</option>
+        <option value="11">📗 Lớp 11</option>
+        <option value="12">📕 Lớp 12</option>
       </select>
     </div>
     
     <div style="margin-bottom: 15px;">
-      <label style="display: block; margin-bottom: 10px; font-weight: 600;">Loai tai lieu:</label>
+      <label style="display: block; margin-bottom: 10px; font-weight: 600;">Loại tài liệu:</label>
       <div class="material-type-selector">
         <label class="type-option active" onclick="selectMaterialType('file', this)">
           <input type="radio" name="material_type" value="file" checked>
           <div style="font-size: 32px; margin-bottom: 8px;">📄</div>
-          <div style="font-weight: 600;">File tai lieu</div>
+          <div style="font-weight: 600;">File tài liệu</div>
           <small>PDF, Word, PowerPoint</small>
         </label>
         
         <label class="type-option" onclick="selectMaterialType('video', this)">
           <input type="radio" name="material_type" value="video">
           <div style="font-size: 32px; margin-bottom: 8px;">🎥</div>
-          <div style="font-weight: 600;">Video bai giang</div>
+          <div style="font-weight: 600;">Video bài giảng</div>
           <small>Google Drive link</small>
         </label>
       </div>
@@ -222,9 +222,9 @@
     <!-- Upload File Section -->
     <div id="file-upload" class="upload-section active">
       <div style="margin-bottom: 15px;">
-        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Chon file:</label>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Chọn file:</label>
         <input type="file" name="material_file" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt" style="width: 100%;">
-        <small style="color: #666;">Ho tro: PDF, Word, PowerPoint</small>
+        <small style="color: #666;">Hỗ trợ: PDF, Word, PowerPoint</small>
       </div>
     </div>
     
@@ -233,26 +233,26 @@
       <div style="margin-bottom: 15px;">
         <label style="display: block; margin-bottom: 5px; font-weight: 600;">Link Google Drive:</label>
         <input type="text" name="video_link" placeholder="https://drive.google.com/file/d/..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
-        <small style="color: #666;">Paste link chia se tu Google Drive (Luu y: Phai bat che do "Anyone with the link can view")</small>
+        <small style="color: #666;">Paste link chia sẻ từ Google Drive (Lưu ý: Phải bật chế độ "Anyone with the link can view")</small>
       </div>
     </div>
     
-    <button type="submit" style="background-color: #009688; padding: 10px 24px; color: white; border: none; border-radius: 6px; cursor: pointer;">Tai len</button>
-    <button type="button" onclick="document.getElementById('uploadMaterialForm').style.display='none'" style="background-color: #757575; padding: 10px 24px; color: white; border: none; border-radius: 6px; cursor: pointer; margin-left: 10px;">Huy</button>
+    <button type="submit" style="background-color: #009688; padding: 10px 24px; color: white; border: none; border-radius: 6px; cursor: pointer;">Tải lên</button>
+    <button type="button" onclick="document.getElementById('uploadMaterialForm').style.display='none'" style="background-color: #757575; padding: 10px 24px; color: white; border: none; border-radius: 6px; cursor: pointer; margin-left: 10px;">Hủy</button>
   </form>
 </div>
 
 <div style="margin-bottom: 30px;">
-  <h3 style="color: #00796b;">DANH SACH DE THI</h3>
+  <h3 style="color: #00796b;">DANH SÁCH ĐỀ THI</h3>
   {% if exams %}
   <table style="width: 100%; border-collapse: collapse;">
     <thead>
       <tr style="background-color: #e0f2f1;">
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Tieu de</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Loai</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thoi gian</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Ngay tao</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thao tac</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Tiêu đề</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Loại</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thời gian</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Ngày tạo</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thao tác</th>
       </tr>
     </thead>
     <tbody>
@@ -260,36 +260,36 @@
       <tr>
         <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.title }}</td>
         <td style="padding: 12px; border: 1px solid #ddd;">
-          {% if exam.type == 'multiple_choice' %}Trac nghiem
-          {% elif exam.type == 'mixed' %}Hon hop
-          {% else %}Tu luan{% endif %}
+          {% if exam.type == 'multiple_choice' %}Trắc nghiệm
+          {% elif exam.type == 'mixed' %}Hỗn hợp
+          {% else %}Tự luận{% endif %}
         </td>
-        <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.duration }} phut</td>
+        <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.duration }} phút</td>
         <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.created_at }}</td>
         <td style="padding: 12px; border: 1px solid #ddd;">
-          <button onclick="viewExam('{{ exam_id }}')" style="padding: 6px 12px; font-size: 14px; background-color: #0288d1;">Xem de</button>
+          <button onclick="viewExam('{{ exam_id }}')" style="padding: 6px 12px; font-size: 14px; background-color: #0288d1;">Xem đề</button>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
   {% else %}
-  <p style="color: #666;">Chua co de thi nao.</p>
+  <p style="color: #666;">Chưa có đề thi nào.</p>
   {% endif %}
 </div>
 
 <div id="examDetailModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; overflow-y: auto;">
   <div style="background: white; max-width: 800px; margin: 50px auto; padding: 30px; border-radius: 12px; position: relative;">
-    <button onclick="closeExamDetail()" style="position: absolute; top: 15px; right: 15px; background: #f44336; padding: 8px 16px;">Dong</button>
+    <button onclick="closeExamDetail()" style="position: absolute; top: 15px; right: 15px; background: #f44336; padding: 8px 16px;">Đóng</button>
     <div id="examDetailContent"></div>
   </div>
 </div>
 
 <!-- CẬP NHẬT: DANH SÁCH BÀI NỘP - Hiển thị tất cả bài có tự luận -->
 <div style="margin-bottom: 30px;">
-  <h3 style="color: #00796b;">🤖 BAI NOP DA DUOC AI CHAM</h3>
+  <h3 style="color: #00796b;">🤖 BÀI NỘP ĐÃ ĐƯỢC AI CHẤM</h3>
   <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
-    📌 AI da tu dong cham tat ca bai tu luan. Ban co the xem va dieu chinh diem neu can.
+    📌 AI đã tự động chấm tất cả bài tự luận. Bạn có thể xem và điều chỉnh điểm nếu cần.
   </p>
   
   {% set ai_graded_submissions = submissions|selectattr('ai_graded', 'equalto', True)|list %}
@@ -298,13 +298,13 @@
   <table style="width: 100%; border-collapse: collapse;">
     <thead>
       <tr style="background-color: #e0f2f1;">
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Hoc sinh</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">De thi</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Loai</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Diem AI</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Trang thai</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Ngay nop</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thao tac</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Học sinh</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Đề thi</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Loại</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Điểm AI</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Trạng thái</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Ngày nộp</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thao tác</th>
       </tr>
     </thead>
     <tbody>
@@ -318,26 +318,26 @@
         </td>
         <td style="padding: 12px; border: 1px solid #ddd;">
           {% if submission.type == 'essay' %}
-            <span style="color: #f57c00;">📝 Tu luan</span>
+            <span style="color: #f57c00;">📝 Tự luận</span>
           {% elif submission.type == 'mixed' %}
-            <span style="color: #9c27b0;">🔀 Hon hop</span>
+            <span style="color: #9c27b0;">🔀 Hỗn hợp</span>
           {% else %}
-            <span style="color: #2196f3;">✓ Trac nghiem</span>
+            <span style="color: #2196f3;">✓ Trắc nghiệm</span>
           {% endif %}
         </td>
         <td style="padding: 12px; border: 1px solid #ddd;">
           <strong style="color: #1976d2; font-size: 16px;">
-            {{ submission.score }} diem
+            {{ submission.score }} điểm
           </strong>
         </td>
         <td style="padding: 12px; border: 1px solid #ddd;">
           {% if submission.teacher_adjusted %}
             <span class="status-badge status-teacher-adjusted">
-              ✓ GV da dieu chinh
+              ✓ GV đã điều chỉnh
             </span>
           {% else %}
             <span class="status-badge status-ai-graded">
-              🤖 AI da cham
+              🤖 AI đã chấm
             </span>
           {% endif %}
         </td>
@@ -348,9 +348,9 @@
           <a href="{{ url_for('view_submission', submission_index=loop.index0) }}" 
              style="padding: 6px 12px; font-size: 14px; background-color: #0288d1; color: white; text-decoration: none; border-radius: 4px; display: inline-block;">
             {% if submission.teacher_adjusted %}
-              Xem chi tiet
+              Xem chi tiết
             {% else %}
-              Xem & Dieu chinh
+              Xem & Điều chỉnh
             {% endif %}
           </a>
         </td>
@@ -359,18 +359,18 @@
     </tbody>
   </table>
   {% else %}
-  <p style="color: #666;">Chua co bai nop nao.</p>
+  <p style="color: #666;">Chưa có bài nộp nào.</p>
   {% endif %}
 </div>
 
-<!-- TAI LIEU DA DANG - PHAN LOAI THEO LOP -->
+<!-- TÀI LIỆU ĐÃ ĐĂNG - PHÂN LOẠI THEO LỚP -->
 <div>
-  <h3 style="color: #00796b;">📚 TAI LIEU DA DANG</h3>
+  <h3 style="color: #00796b;">📚 TÀI LIỆU ĐÃ ĐĂNG</h3>
   
   <div class="grade-tabs">
-    <button onclick="showGradeMaterials('10')" class="grade-tab active">📘 Lop 10</button>
-    <button onclick="showGradeMaterials('11')" class="grade-tab">📗 Lop 11</button>
-    <button onclick="showGradeMaterials('12')" class="grade-tab">📕 Lop 12</button>
+    <button onclick="showGradeMaterials('10')" class="grade-tab active">📘 Lớp 10</button>
+    <button onclick="showGradeMaterials('11')" class="grade-tab">📗 Lớp 11</button>
+    <button onclick="showGradeMaterials('12')" class="grade-tab">📕 Lớp 12</button>
   </div>
   
   {% for grade in ['10', '11', '12'] %}
@@ -379,12 +379,12 @@
       <table class="materials-table">
         <thead>
           <tr>
-            <th style="width: 5%;">Loai</th>
-            <th style="width: 25%;">Tieu de</th>
-            <th style="width: 30%;">Mo ta</th>
-            <th style="width: 15%;">Nguoi dang</th>
-            <th style="width: 15%;">Ngay dang</th>
-            <th style="width: 10%;">Thao tac</th>
+            <th style="width: 5%;">Loại</th>
+            <th style="width: 25%;">Tiêu đề</th>
+            <th style="width: 30%;">Mô tả</th>
+            <th style="width: 15%;">Người đăng</th>
+            <th style="width: 15%;">Ngày đăng</th>
+            <th style="width: 10%;">Thao tác</th>
           </tr>
         </thead>
         <tbody>
@@ -396,17 +396,17 @@
               </span>
             </td>
             <td><strong>{{ material.title }}</strong></td>
-            <td>{{ material.description or 'Khong co mo ta' }}</td>
+            <td>{{ material.description or 'Không có mô tả' }}</td>
             <td>{{ material.uploaded_by }}</td>
             <td>{{ material.uploaded_at }}</td>
             <td>
               {% if material.type == 'file' %}
-                <a href="{{ url_for('download_material', filename=material.filename) }}" class="btn-action btn-download">Tai xuong</a>
+                <a href="{{ url_for('download_material', filename=material.filename) }}" class="btn-action btn-download">Tải xuống</a>
               {% else %}
                 <a href="{{ material.video_link }}" target="_blank" class="btn-action btn-view">Xem</a>
               {% endif %}
               <form action="{{ url_for('delete_material', material_id=material.id) }}" method="POST" style="display: inline;">
-                <button type="submit" class="btn-action btn-delete" onclick="return confirm('Ban chac chan muon xoa tai lieu nay?')">Xoa</button>
+                <button type="submit" class="btn-action btn-delete" onclick="return confirm('Bạn chắc chắn muốn xóa tài liệu này?')">Xóa</button>
               </form>
             </td>
           </tr>
@@ -416,7 +416,7 @@
     {% else %}
       <div class="no-materials">
         <p style="font-size: 48px; margin-bottom: 10px;">📭</p>
-        <p>Chua co tai lieu nao cho lop {{ grade }}</p>
+        <p>Chưa có tài liệu nào cho lớp {{ grade }}</p>
       </div>
     {% endif %}
   </div>
@@ -453,18 +453,18 @@ function showGradeMaterials(grade) {
 function viewExam(examId) {
   var exam = examsData[examId];
   var content = '<h2 style="color: #00796b;">' + exam.title + '</h2>';
-  content += '<p><strong>Loai:</strong> ';
-  if (exam.type === 'multiple_choice') content += 'Trac nghiem';
-  else if (exam.type === 'mixed') content += 'Hon hop';
-  else content += 'Tu luan';
+  content += '<p><strong>Loại:</strong> ';
+  if (exam.type === 'multiple_choice') content += 'Trắc nghiệm';
+  else if (exam.type === 'mixed') content += 'Hỗn hợp';
+  else content += 'Tự luận';
   content += '</p>';
-  content += '<p><strong>Thoi gian:</strong> ' + exam.duration + ' phut</p>';
-  content += '<p><strong>Tong diem:</strong> ' + exam.total_score + ' diem</p>';
+  content += '<p><strong>Thời gian:</strong> ' + exam.duration + ' phút</p>';
+  content += '<p><strong>Tổng điểm:</strong> ' + exam.total_score + ' điểm</p>';
   
   // Hiển thị tiêu chí chấm tổng thể (nếu có)
   if (exam.general_grading_criteria) {
     content += '<div style="background: #fff3e0; padding: 15px; margin: 15px 0; border-radius: 8px; border-left: 4px solid #f57c00;">';
-    content += '<h4 style="margin-top: 0; color: #f57c00;">📋 Tieu chi cham tong the</h4>';
+    content += '<h4 style="margin-top: 0; color: #f57c00;">📋 Tiêu chí chấm tổng thể</h4>';
     content += '<pre style="white-space: pre-wrap; font-family: inherit;">' + exam.general_grading_criteria + '</pre>';
     content += '</div>';
   }
@@ -473,47 +473,47 @@ function viewExam(examId) {
   
   if (exam.type === 'multiple_choice' || exam.type === 'mixed') {
     if (exam.questions.multiple_choice && exam.questions.multiple_choice.length > 0) {
-      content += '<h3>PHAN TRAC NGHIEM</h3>';
+      content += '<h3>PHẦN TRẮC NGHIỆM</h3>';
       exam.questions.multiple_choice.forEach(function(q, i) {
         content += '<div style="background: #f5f5f5; padding: 15px; margin-bottom: 15px; border-radius: 8px;">';
-        content += '<p><strong>Cau ' + (i+1) + ':</strong> ' + q.question + '</p>';
+        content += '<p><strong>Câu ' + (i+1) + ':</strong> ' + q.question + '</p>';
         q.options.forEach(function(opt) {
           var isCorrect = opt[0] === q.answer;
-          content += '<p style="margin-left: 20px; ' + (isCorrect ? 'color: green; font-weight: bold;' : '') + '">' + opt + (isCorrect ? ' (Dap an dung)' : '') + '</p>';
+          content += '<p style="margin-left: 20px; ' + (isCorrect ? 'color: green; font-weight: bold;' : '') + '">' + opt + (isCorrect ? ' (Đáp án đúng)' : '') + '</p>';
         });
         content += '</div>';
       });
     }
     
     if (exam.questions.true_false && exam.questions.true_false.length > 0) {
-      content += '<h3>PHAN DUNG/SAI</h3>';
+      content += '<h3>PHẦN ĐÚNG/SAI</h3>';
       exam.questions.true_false.forEach(function(tf, i) {
         content += '<div style="background: #f5f5f5; padding: 15px; margin-bottom: 15px; border-radius: 8px;">';
         var qNum = exam.questions.multiple_choice ? i + exam.questions.multiple_choice.length + 1 : i + 1;
-        content += '<p><strong>Cau ' + qNum + ':</strong> ' + tf.question + '</p>';
+        content += '<p><strong>Câu ' + qNum + ':</strong> ' + tf.question + '</p>';
         tf.statements.forEach(function(stmt, j) {
           var isTrue = tf.answers[j];
-          content += '<p style="margin-left: 20px;"><strong>' + (j+1) + '.</strong> ' + stmt + ' - <span style="color: ' + (isTrue ? 'green' : 'red') + '; font-weight: bold;">' + (isTrue ? 'DUNG' : 'SAI') + '</span></p>';
+          content += '<p style="margin-left: 20px;"><strong>' + (j+1) + '.</strong> ' + stmt + ' - <span style="color: ' + (isTrue ? 'green' : 'red') + '; font-weight: bold;">' + (isTrue ? 'ĐÚNG' : 'SAI') + '</span></p>';
         });
         content += '</div>';
       });
     }
     
     if (exam.type === 'mixed' && exam.questions.essay && exam.questions.essay.length > 0) {
-      content += '<h3>PHAN TU LUAN</h3>';
+      content += '<h3>PHẦN TỰ LUẬN</h3>';
       exam.questions.essay.forEach(function(eq, i) {
         content += '<div style="background: #f5f5f5; padding: 15px; margin-bottom: 15px; border-radius: 8px;">';
-        content += '<p><strong>Cau ' + (i+1) + ':</strong> ' + eq.question + '</p>';
-        content += '<p style="margin-left: 20px; color: #666;"><em>Tieu chi cham:</em> ' + eq.grading_criteria + '</p>';
+        content += '<p><strong>Câu ' + (i+1) + ':</strong> ' + eq.question + '</p>';
+        content += '<p style="margin-left: 20px; color: #666;"><em>Tiêu chí chấm:</em> ' + eq.grading_criteria + '</p>';
         content += '</div>';
       });
     }
   } else if (exam.type === 'essay') {
-    content += '<h3>CAU HOI TU LUAN</h3>';
+    content += '<h3>CÂU HỎI TỰ LUẬN</h3>';
     content += '<div style="background: #f5f5f5; padding: 15px; border-radius: 8px;">';
     content += '<p>' + exam.essay_question + '</p>';
     content += '</div>';
-    content += '<h3 style="margin-top: 20px;">TIEU CHI CHAM DIEM</h3>';
+    content += '<h3 style="margin-top: 20px;">TIÊU CHÍ CHẤM ĐIỂM</h3>';
     content += '<div style="background: #f5f5f5; padding: 15px; border-radius: 8px;">';
     content += '<pre style="white-space: pre-wrap;">' + exam.grading_criteria + '</pre>';
     content += '</div>';

@@ -1,7 +1,7 @@
 <!-- templates/create_exam.html -->
 {% extends "layout.html" %}
 
-{% block title %}Tao de thi{% endblock %}
+{% block title %}Tạo đề thi{% endblock %}
 
 {% block content %}
 <style>
@@ -41,16 +41,14 @@
   }
 
   .exam-form {
-    display: none;
     background: #f5f5f5;
     padding: 25px;
     border-radius: 10px;
     margin-top: 20px;
   }
-
-  .exam-form.active {
-    display: block;
-    animation: fadeIn 0.3s;
+  
+  .exam-form:not(.active) {
+    display: none;
   }
 
   @keyframes fadeIn {
@@ -121,7 +119,6 @@
     font-size: 14px;
   }
 
-  /* THÊM STYLE CHO TIÊU CHÍ CHẤM */
   .criteria-box {
     background: #e3f2fd;
     border-left: 4px solid #2196f3;
@@ -153,178 +150,236 @@
     background: linear-gradient(135deg, #005a4d 0%, #00796b 100%);
     box-shadow: 0 5px 15px rgba(0,121,107,0.3);
   }
+
+  /* STYLE CHO KHUNG FILE MẪU */
+  .sample-file-box {
+    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+    border: 2px solid #81c784;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .sample-file-box h3 {
+    color: #2e7d32;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+
+  .sample-file-box p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+
+  .sample-download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 25px;
+    background: white;
+    border: 2px solid #4caf50;
+    border-radius: 8px;
+    color: #2e7d32;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .sample-download-btn:hover {
+    background: #4caf50;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76,175,80,0.3);
+  }
+
+  .sample-download-btn span {
+    font-size: 24px;
+  }
 </style>
 
-<h2>TAO DE THI MOI</h2>
+<h2>TẠO ĐỀ THI MỚI</h2>
+
+<!-- KHUNG DOWNLOAD FILE MẪU -->
+<div class="sample-file-box">
+  <h3>📥 File đề mẫu minh họa</h3>
+  <p>Tải về file mẫu để tham khảo định dạng trước khi tạo đề thi</p>
+  <a href="https://docs.google.com/document/d/18uqjNDtnikyVAYhYX6GxNMTwnDSr0PnT/edit?usp=sharing&ouid=109388140720750358249&rtpof=true&sd=true" target="_blank" class="sample-download-btn">
+    <span>📄</span>
+    <div style="text-align: left;">
+      <strong>File mẫu định dạng đề thi</strong><br>
+      <small style="font-weight: normal; color: #666;">Word (.docx) - Hướng dẫn chi tiết</small>
+    </div>
+  </a>
+</div>
 
 <div class="exam-type-cards">
-  <div class="exam-card active" onclick="selectExamType('multiple_choice')">
+  <div class="exam-card active" data-type="multiple_choice">
     <div class="exam-icon">📝</div>
-    <h3>Trac nghiem</h3>
-    <p style="font-size: 13px; color: #666;">Chi co ABCD va Dung/Sai</p>
+    <h3>Trắc nghiệm</h3>
+    <p style="font-size: 13px; color: #666;">Chỉ có ABCD và Đúng/Sai</p>
   </div>
 
-  <div class="exam-card" onclick="selectExamType('mixed')">
+  <div class="exam-card" data-type="mixed">
     <div class="exam-icon">📋</div>
-    <h3>Hon hop</h3>
-    <p style="font-size: 13px; color: #666;">ABCD + Dung/Sai + Tu luan</p>
+    <h3>Hỗn hợp</h3>
+    <p style="font-size: 13px; color: #666;">ABCD + Đúng/Sai + Tự luận</p>
   </div>
 
-  <div class="exam-card" onclick="selectExamType('essay')">
+  <div class="exam-card" data-type="essay">
     <div class="exam-icon">✍️</div>
-    <h3>Tu luan</h3>
-    <p style="font-size: 13px; color: #666;">Chi co cau hoi tu luan</p>
+    <h3>Tự luận</h3>
+    <p style="font-size: 13px; color: #666;">Chỉ có câu hỏi tự luận</p>
   </div>
 </div>
 
-<!-- FORM TRẮC NGHIỆM - CẬP NHẬT -->
+<!-- FORM TRẮC NGHIỆM -->
 <form id="form-multiple-choice" class="exam-form active" method="POST" enctype="multipart/form-data">
   <input type="hidden" name="exam_type" value="multiple_choice">
   
-  <h3 style="color: #00796b; margin-bottom: 20px;">Cau hinh de trac nghiem</h3>
+  <h3 style="color: #00796b; margin-bottom: 20px;">Cấu hình đề trắc nghiệm</h3>
 
   <div class="form-group">
-    <label>Tieu de de thi:</label>
-    <input type="text" name="title" required placeholder="Vi du: Kiem tra 15 phut - Lich su Lop 10">
+    <label>Tiêu đề đề thi:</label>
+    <input type="text" name="title" required placeholder="Ví dụ: Kiểm tra 15 phút - Lịch sử Lớp 10">
   </div>
 
   <div class="form-group">
-    <label>Phan loai lop:</label>
+    <label>Phân loại lớp:</label>
     <select name="grade" required>
-      <option value="">-- Chon lop --</option>
-      <option value="10">Lop 10</option>
-      <option value="11">Lop 11</option>
-      <option value="12">Lop 12</option>
+      <option value="">-- Chọn lớp --</option>
+      <option value="10">Lớp 10</option>
+      <option value="11">Lớp 11</option>
+      <option value="12">Lớp 12</option>
     </select>
   </div>
 
   <div class="form-group">
-    <label>Thoi gian lam bai (phut):</label>
+    <label>Thời gian làm bài (phút):</label>
     <input type="number" name="duration" value="60" min="10" max="180" required>
   </div>
 
   <div class="form-group">
-    <label>Upload file Word chua noi dung:</label>
+    <label>Upload file Word chứa nội dung:</label>
     <input type="file" name="word_file" accept=".docx" required>
-    <small style="color: #666;">File .docx chua noi dung de AI tao cau hoi</small>
+    <small style="color: #666;">File .docx chứa nội dung để AI tạo câu hỏi</small>
   </div>
 
   <div class="form-group">
-    <label>So cau trac nghiem ABCD:</label>
+    <label>Số câu trắc nghiệm ABCD:</label>
     <input type="number" name="num_multiple" value="10" min="1" max="50" required>
   </div>
 
   <div class="form-group">
-    <label>So cau Dung/Sai (moi cau 4 y):</label>
+    <label>Số câu Đúng/Sai (mỗi câu 4 ý):</label>
     <input type="number" name="num_truefalse" value="5" min="1" max="20" required>
   </div>
 
-  <!-- THÊM TIÊU CHÍ CHẤM TỔNG THỂ -->
   <div class="criteria-box">
     <h4>🤖 Tiêu chí chấm điểm tổng thể (Tùy chọn)</h4>
     <div class="form-group" style="margin-bottom: 0;">
       <label>Hướng dẫn chấm cho AI:</label>
-      <textarea name="general_grading_criteria" rows="4" placeholder="Vi du:
-- Trac nghiem: Chon dap an dung duoc diem day du
-- Dung/Sai: Ap dung phuong phap tru dan
-- Yeu cau hoc sinh phai hieu kien thuc co ban"></textarea>
-      <small style="color: #666;">AI se su dung tieu chi nay de cham diem chinh xac hon</small>
+      <textarea name="general_grading_criteria" rows="4" placeholder="Ví dụ:
+- Trắc nghiệm: Chọn đáp án đúng được điểm đầy đủ
+- Đúng/Sai: Áp dụng phương pháp trừ dần
+- Yêu cầu học sinh phải hiểu kiến thức cơ bản"></textarea>
+      <small style="color: #666;">AI sẽ sử dụng tiêu chí này để chấm điểm chính xác hơn</small>
     </div>
   </div>
 
   <div class="info-box">
-    <strong>Luu y:</strong> AI se tu dong tao cau hoi dua tren noi dung file Word ban upload
+    <strong>Lưu ý:</strong> AI sẽ tự động tạo câu hỏi dựa trên nội dung file Word bạn upload
   </div>
 
-  <button type="submit" class="btn-submit">Tao de thi</button>
+  <button type="submit" class="btn-submit">Tạo đề thi</button>
 </form>
 
-<!-- FORM HỖN HỢP - CẬP NHẬT -->
+<!-- FORM HỖN HỢP -->
 <form id="form-mixed" class="exam-form" method="POST" enctype="multipart/form-data">
   <input type="hidden" name="exam_type" value="mixed">
   
-  <h3 style="color: #00796b; margin-bottom: 20px;">Cau hinh de hon hop</h3>
+  <h3 style="color: #00796b; margin-bottom: 20px;">Cấu hình đề hỗn hợp</h3>
 
   <div class="form-group">
-    <label>Tieu de de thi:</label>
-    <input type="text" name="title" placeholder="Vi du: Kiem tra hoc ky - Lich su Lop 11">
+    <label>Tiêu đề đề thi:</label>
+    <input type="text" name="title" placeholder="Ví dụ: Kiểm tra học kỳ - Lịch sử Lớp 11">
   </div>
 
   <div class="form-group">
-    <label>Phan loai lop:</label>
+    <label>Phân loại lớp:</label>
     <select name="grade">
-      <option value="">-- Chon lop --</option>
-      <option value="10">Lop 10</option>
-      <option value="11">Lop 11</option>
-      <option value="12">Lop 12</option>
+      <option value="">-- Chọn lớp --</option>
+      <option value="10">Lớp 10</option>
+      <option value="11">Lớp 11</option>
+      <option value="12">Lớp 12</option>
     </select>
   </div>
 
   <div class="form-group">
-    <label>Thoi gian lam bai (phut):</label>
+    <label>Thời gian làm bài (phút):</label>
     <input type="number" name="duration" value="90" min="30" max="180">
   </div>
 
   <div class="form-group">
-    <label>Upload file Word chua noi dung:</label>
+    <label>Upload file Word chứa nội dung:</label>
     <input type="file" name="word_file" accept=".docx">
-    <small style="color: #666;">File .docx chua noi dung de AI tao cau hoi</small>
+    <small style="color: #666;">File .docx chứa nội dung để AI tạo câu hỏi</small>
   </div>
 
   <div class="form-group">
-    <label>So cau trac nghiem ABCD:</label>
+    <label>Số câu trắc nghiệm ABCD:</label>
     <input type="number" name="num_multiple" value="5" min="0" max="30">
   </div>
 
   <div class="form-group">
-    <label>So cau Dung/Sai:</label>
+    <label>Số câu Đúng/Sai:</label>
     <input type="number" name="num_truefalse" value="3" min="0" max="15">
   </div>
 
   <div class="form-group">
-    <label>So cau Tu luan:</label>
+    <label>Số câu Tự luận:</label>
     <input type="number" name="num_essay" value="1" min="1" max="5" id="num_essay_mixed">
   </div>
 
   <div class="form-group">
-    <label>Phuong phap cham diem Dung/Sai:</label>
+    <label>Phương pháp chấm điểm Đúng/Sai:</label>
     <div class="grading-method">
-      <label class="grading-option active" onclick="selectGrading('deduction', this)">
+      <label class="grading-option active">
         <input type="radio" name="tf_grading_method" value="deduction" checked style="display: none;">
-        <h4>Tru dan</h4>
+        <h4>Trừ dần</h4>
         <p style="font-size: 12px; margin-top: 8px;">
-          Sai 1 cau: -0.5 diem<br>
-          Sai 2 cau: -0.75 diem<br>
-          Sai 3 cau: chi con 0.1 diem
+          Sai 1 câu: -0.5 điểm<br>
+          Sai 2 câu: -0.75 điểm<br>
+          Sai 3 câu: chỉ còn 0.1 điểm
         </p>
       </label>
 
-      <label class="grading-option" onclick="selectGrading('per_item', this)">
+      <label class="grading-option">
         <input type="radio" name="tf_grading_method" value="per_item" style="display: none;">
-        <h4>Tung y</h4>
+        <h4>Từng ý</h4>
         <p style="font-size: 12px; margin-top: 8px;">
-          Moi y dung: +0.25 diem<br>
-          Moi y sai: +0 diem<br>
-          Toi da 1 diem/cau
+          Mỗi ý đúng: +0.25 điểm<br>
+          Mỗi ý sai: +0 điểm<br>
+          Tối đa 1 điểm/câu
         </p>
       </label>
     </div>
   </div>
 
-  <!-- THÊM TIÊU CHÍ CHẤM TỔNG THỂ -->
   <div class="criteria-box">
     <h4>🤖 Tiêu chí chấm điểm tổng thể</h4>
     <div class="form-group" style="margin-bottom: 0;">
       <label>Hướng dẫn chấm chung cho toàn bộ đề thi:</label>
-      <textarea name="general_grading_criteria" rows="4" placeholder="Vi du:
-- Cau trac nghiem va dung/sai: Tu dong cham
-- Phan tu luan: Yeu cau tra loi ro rang, co logic
-- Danh gia tong hop kha nang hieu bai va van dung kien thuc"></textarea>
-      <small style="color: #666;">AI se dung tieu chi nay de cham phan tu luan</small>
+      <textarea name="general_grading_criteria" rows="4" placeholder="Ví dụ:
+- Câu trắc nghiệm và đúng/sai: Tự động chấm
+- Phần tự luận: Yêu cầu trả lời rõ ràng, có logic
+- Đánh giá tổng hợp khả năng hiểu bài và vận dụng kiến thức"></textarea>
+      <small style="color: #666;">AI sẽ dùng tiêu chí này để chấm phần tự luận</small>
     </div>
   </div>
 
-  <!-- KHU VỰC TIÊU CHÍ CHO TỪNG CÂU TỰ LUẬN -->
   <div id="essay-criteria-container" style="display: none;">
     <div class="criteria-box">
       <h4>📝 Tiêu chí chấm cho từng câu tự luận</h4>
@@ -338,140 +393,180 @@
   </div>
 
   <div class="info-box">
-    <strong>Phan bo diem:</strong> Trac nghiem 40% + Dung/Sai 30% + Tu luan 30%<br>
-    <strong>Luu y:</strong> AI se tu dong cham phan tu luan ngay sau khi hoc sinh nop bai
+    <strong>Phân bổ điểm:</strong> Trắc nghiệm 40% + Đúng/Sai 30% + Tự luận 30%<br>
+    <strong>Lưu ý:</strong> AI sẽ tự động chấm phần tự luận ngay sau khi học sinh nộp bài
   </div>
 
-  <button type="submit" class="btn-submit">Tao de thi</button>
+  <button type="submit" class="btn-submit">Tạo đề thi</button>
 </form>
 
-<!-- FORM TỰ LUẬN - CẬP NHẬT -->
+<!-- FORM TỰ LUẬN -->
 <form id="form-essay" class="exam-form" method="POST">
   <input type="hidden" name="exam_type" value="essay">
   
-  <h3 style="color: #00796b; margin-bottom: 20px;">Cau hinh de tu luan</h3>
+  <h3 style="color: #00796b; margin-bottom: 20px;">Cấu hình đề tự luận</h3>
 
   <div class="form-group">
-    <label>Tieu de de thi:</label>
-    <input type="text" name="title" placeholder="Vi du: Bai tap lon - Lich su Lop 12">
+    <label>Tiêu đề đề thi:</label>
+    <input type="text" name="title" placeholder="Ví dụ: Bài tập lớn - Lịch sử Lớp 12">
   </div>
 
   <div class="form-group">
-    <label>Phan loai lop:</label>
+    <label>Phân loại lớp:</label>
     <select name="grade">
-      <option value="">-- Chon lop --</option>
-      <option value="10">Lop 10</option>
-      <option value="11">Lop 11</option>
-      <option value="12">Lop 12</option>
+      <option value="">-- Chọn lớp --</option>
+      <option value="10">Lớp 10</option>
+      <option value="11">Lớp 11</option>
+      <option value="12">Lớp 12</option>
     </select>
   </div>
 
   <div class="form-group">
-    <label>Thoi gian lam bai (phut):</label>
+    <label>Thời gian làm bài (phút):</label>
     <input type="number" name="duration" value="90" min="30" max="180">
   </div>
 
   <div class="form-group">
-    <label>Cau hoi tu luan:</label>
-    <textarea name="essay_question" rows="4" placeholder="Nhap cau hoi tu luan..."></textarea>
+    <label>Câu hỏi tự luận:</label>
+    <textarea name="essay_question" rows="4" placeholder="Nhập câu hỏi tự luận..."></textarea>
   </div>
 
-  <!-- CẬP NHẬT TIÊU CHÍ CHẤM CHI TIẾT HƠN -->
   <div class="criteria-box">
     <h4>🤖 Tiêu chí chấm điểm chi tiết cho AI</h4>
     <div class="form-group" style="margin-bottom: 0;">
       <label>Hướng dẫn chấm cụ thể:</label>
-      <textarea name="grading_criteria" rows="8" placeholder="Vi du CHI TIET:
+      <textarea name="grading_criteria" rows="8" placeholder="Ví dụ CHI TIẾT:
 
-TIEU CHI CHAM (Thang diem 10):
-- Y 1: Nguyen nhan cua su kien (2 diem)
-  + Neu dung 2 nguyen nhan chinh: 2 diem
-  + Neu dung 1 nguyen nhan: 1 diem
+TIÊU CHÍ CHẤM (Thang điểm 10):
+- Ý 1: Nguyên nhân của sự kiện (2 điểm)
+  + Nêu đúng 2 nguyên nhân chính: 2 điểm
+  + Nêu đúng 1 nguyên nhân: 1 điểm
   
-- Y 2: Dien bien cua su kien (3 diem)
-  + Mo ta day du qua trinh: 3 diem
-  + Mo ta so luoc: 1.5 diem
+- Ý 2: Diễn biến của sự kiện (3 điểm)
+  + Mô tả đầy đủ quá trình: 3 điểm
+  + Mô tả sơ lược: 1.5 điểm
   
-- Y 3: Y nghia lich su (3 diem)
-  + Phan tich sau sac: 3 diem
-  + Chi nhan xet chung: 1.5 diem
+- Ý 3: Ý nghĩa lịch sử (3 điểm)
+  + Phân tích sâu sắc: 3 điểm
+  + Chỉ nhận xét chung: 1.5 điểm
   
-- Y 4: Ket luan va bai hoc (2 diem)
-  + Ket luan ro rang, co bai hoc: 2 diem
-  + Chi co ket luan: 1 diem
+- Ý 4: Kết luận và bài học (2 điểm)
+  + Kết luận rõ ràng, có bài học: 2 điểm
+  + Chỉ có kết luận: 1 điểm
 
-LUU Y CHAM:
-- Bai viet phai co logic, mach lac
-- Khong sao chep nguyen van tu sach
-- Danh gia cao neu co su phan tich ca nhan"></textarea>
+LƯU Ý CHẤM:
+- Bài viết phải có logic, mạch lạc
+- Không sao chép nguyên văn từ sách
+- Đánh giá cao nếu có sự phân tích cá nhân"></textarea>
       <small style="color: #666;">
-        <strong>Quan trong:</strong> Tieu chi càng chi tiet, AI cham diem càng chinh xac. 
-        Nen phan chia ro tung y va quy dinh cu the so diem cho tung muc do.
+        <strong>Quan trọng:</strong> Tiêu chí càng chi tiết, AI chấm điểm càng chính xác. 
+        Nên phân chia rõ từng ý và quy định cụ thể số điểm cho từng mức độ.
       </small>
     </div>
   </div>
 
-  <!-- THÊM TIÊU CHÍ TỔNG THỂ -->
   <div class="criteria-box">
     <h4>📋 Tiêu chí chấm tổng thể (Tùy chọn)</h4>
     <div class="form-group" style="margin-bottom: 0;">
       <label>Yêu cầu chung về bài làm:</label>
-      <textarea name="general_grading_criteria" rows="3" placeholder="Vi du:
-- Bai lam phai co do dai tu 300-500 tu
-- Van ban phai mach lac, ro rang
-- Khong duoc sao chep tu nguon khac"></textarea>
+      <textarea name="general_grading_criteria" rows="3" placeholder="Ví dụ:
+- Bài làm phải có độ dài từ 300-500 từ
+- Văn bản phải mạch lạc, rõ ràng
+- Không được sao chép từ nguồn khác"></textarea>
     </div>
   </div>
 
   <div class="info-box">
-    <strong>🤖 AI tu dong cham diem:</strong> Sau khi hoc sinh nop bai, AI se tu dong cham va dua ra:
+    <strong>🤖 AI tự động chấm điểm:</strong> Sau khi học sinh nộp bài, AI sẽ tự động chấm và đưa ra:
     <ul style="margin: 10px 0 0 20px;">
-      <li>Diem so (thang 10)</li>
-      <li>Phan tich diem manh</li>
-      <li>Chi ra diem yeu can cai thien</li>
-      <li>Kien thuc con thieu</li>
-      <li>Goi y cu the de hoc tot hon</li>
+      <li>Điểm số (thang 10)</li>
+      <li>Phân tích điểm mạnh</li>
+      <li>Chỉ ra điểm yếu cần cải thiện</li>
+      <li>Kiến thức còn thiếu</li>
+      <li>Gợi ý cụ thể để học tốt hơn</li>
     </ul>
   </div>
 
-  <button type="submit" class="btn-submit">Tao de thi</button>
+  <button type="submit" class="btn-submit">Tạo đề thi</button>
 </form>
 
 <p style="text-align: center; margin-top: 30px;">
-  <a href="{{ url_for('dashboard_teacher') }}" style="color: #00796b; text-decoration: none; font-weight: 600;">← Quay lai trang quan ly</a>
+  <a href="{{ url_for('dashboard_teacher') }}" style="color: #00796b; text-decoration: none; font-weight: 600;">← Quay lại trang quản lý</a>
 </p>
 
 <script>
-function selectExamType(type) {
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Script loaded');
+  
+  // Xử lý click vào exam card
   document.querySelectorAll('.exam-card').forEach(card => {
-    card.classList.remove('active');
+    card.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      const type = this.getAttribute('data-type');
+      console.log('Clicked:', type);
+      
+      // Xóa active từ tất cả cards
+      document.querySelectorAll('.exam-card').forEach(c => {
+        c.classList.remove('active');
+      });
+      
+      // Thêm active cho card hiện tại
+      this.classList.add('active');
+      
+      // Ẩn tất cả forms
+      document.querySelectorAll('.exam-form').forEach(form => {
+        form.classList.remove('active');
+      });
+      
+      // Hiển thị form tương ứng
+      const targetForm = document.getElementById('form-' + type);
+      console.log('Target form:', targetForm);
+      if (targetForm) {
+        targetForm.classList.add('active');
+        console.log('Form activated:', 'form-' + type);
+      }
+    });
   });
   
-  event.target.closest('.exam-card').classList.add('active');
-  
-  document.querySelectorAll('.exam-form').forEach(form => {
-    form.classList.remove('active');
+  // Xử lý grading method
+  document.querySelectorAll('.grading-option').forEach(option => {
+    option.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      this.closest('.grading-method').querySelectorAll('.grading-option').forEach(opt => {
+        opt.classList.remove('active');
+      });
+      
+      this.classList.add('active');
+      
+      const radio = this.querySelector('input[type="radio"]');
+      if (radio) {
+        radio.checked = true;
+      }
+    });
   });
   
-  document.getElementById('form-' + type).classList.add('active');
-}
-
-function selectGrading(method, element) {
-  element.closest('.grading-method').querySelectorAll('.grading-option').forEach(opt => {
-    opt.classList.remove('active');
-  });
-  
-  element.classList.add('active');
-}
-
-// Hiển thị/ẩn phần tiêu chí tự luận khi thay đổi số câu
-document.getElementById('num_essay_mixed')?.addEventListener('change', function() {
-  const container = document.getElementById('essay-criteria-container');
-  if (parseInt(this.value) > 0) {
-    container.style.display = 'block';
-  } else {
-    container.style.display = 'none';
+  // Hiển thị/ẩn phần tiêu chí tự luận
+  const numEssayInput = document.getElementById('num_essay_mixed');
+  if (numEssayInput) {
+    numEssayInput.addEventListener('change', function() {
+      const container = document.getElementById('essay-criteria-container');
+      if (parseInt(this.value) > 0) {
+        container.style.display = 'block';
+      } else {
+        container.style.display = 'none';
+      }
+    });
+    
+    if (parseInt(numEssayInput.value) > 0) {
+      document.getElementById('essay-criteria-container').style.display = 'block';
+    }
   }
+  
+  // Log trạng thái ban đầu
+  console.log('Forms:', document.querySelectorAll('.exam-form'));
+  console.log('Active form:', document.querySelector('.exam-form.active'));
 });
 </script>
 

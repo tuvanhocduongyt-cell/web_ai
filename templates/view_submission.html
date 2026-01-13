@@ -436,28 +436,28 @@
 {% endif %}
 
 <div class="info-box">
-    <p><strong>Hoc sinh:</strong> {{ submission.student }}</p>
-    <p><strong>Ngay nop:</strong> {{ submission.submitted_at }}</p>
-    <p><strong>Loai de:</strong> 
-        {% if submission.type == 'multiple_choice' %}Trac nghiem
-        {% elif submission.type == 'mixed' %}Hon hop
-        {% else %}Tu luan{% endif %}
+    <p><strong>Học sinh:</strong> {{ submission.student }}</p>
+    <p><strong>Ngày nộp:</strong> {{ submission.submitted_at }}</p>
+    <p><strong>Loại đề:</strong> 
+        {% if submission.type == 'multiple_choice' %}Trắc nghiệm
+        {% elif submission.type == 'mixed' %}Hỗn hợp
+        {% else %}Tự luận{% endif %}
     </p>
-    <p><strong>Lop:</strong> {{ exam.grade }}</p>
+    <p><strong>Lớp:</strong> {{ exam.grade }}</p>
 </div>
 
 <!-- AI FEEDBACK CHO CÂU TRẮC NGHIỆM SAI -->
 {% if submission.mc_ai_feedback %}
 <div class="ai-mc-feedback">
-    <h3>🤖 AI PHAN TICH CAC CAU TRAC NGHIEM SAI</h3>
+    <h3>AI PHÂN TÍCH CÁC CÂU TRẮC NGHIỆM SAI</h3>
     
     <div class="feedback-item">
-        <span class="feedback-label" style="color: #f57c00;">📚 Ke hoach on tap:</span>
+        <span class="feedback-label" style="color: #f57c00;">📚 Kế hoạch ôn tập:</span>
         <div class="feedback-content">{{ submission.mc_ai_feedback.ke_hoach_on_tap }}</div>
     </div>
     
     <div class="feedback-item">
-        <span class="feedback-label" style="color: #2193b0;">🔗 Cac chu de lien quan:</span>
+        <span class="feedback-label" style="color: #2193b0;">🔗Các chủ đề liên quan:</span>
         <div class="feedback-content">{{ submission.mc_ai_feedback.cac_chu_de_lien_quan }}</div>
     </div>
 </div>
@@ -466,15 +466,15 @@
 <!-- AI FEEDBACK CHO CÂU ĐÚNG/SAI SAI -->
 {% if submission.tf_ai_feedback %}
 <div class="ai-tf-feedback">
-    <h3>🤖 AI PHAN TICH CAC Y DUNG/SAI SAI</h3>
+    <h3>AI PHÂN TÍCH ĐÚNG/SAI</h3>
     
     <div class="feedback-item">
-        <span class="feedback-label" style="color: #f57c00;">📚 Ke hoach on tap:</span>
+        <span class="feedback-label" style="color: #f57c00;">📚 Kế hoạch ôn tập:</span>
         <div class="feedback-content">{{ submission.tf_ai_feedback.ke_hoach_on_tap }}</div>
     </div>
     
     <div class="feedback-item">
-        <span class="feedback-label" style="color: #2193b0;">🔗 Cac chu de lien quan:</span>
+        <span class="feedback-label" style="color: #2193b0;">🔗 Các chủ đề liên quan:</span>
         <div class="feedback-content">{{ submission.tf_ai_feedback.cac_chu_de_lien_quan }}</div>
     </div>
 </div>
@@ -483,30 +483,30 @@
 <!-- PHAN HOI AI CHO BAI TU LUAN -->
 {% if submission.ai_feedback %}
 <div class="ai-feedback-box">
-    <h3>🤖 PHAN TICH TU AI</h3>
+    <h3>PHÂN TÍCH TỪ AI</h3>
     
     <div class="feedback-item">
-        <span class="feedback-label" style="color: #28a745;">✅ Diem manh:</span>
+        <span class="feedback-label" style="color: #28a745;">✅ Điểm mạnh:</span>
         <div class="feedback-content">{{ submission.ai_feedback.strengths }}</div>
     </div>
     
     <div class="feedback-item">
-        <span class="feedback-label" style="color: #dc3545;">⚠️ Diem yeu can cai thien:</span>
+        <span class="feedback-label" style="color: #dc3545;">⚠️ Điểm yếu cần cải thiện:</span>
         <div class="feedback-content">{{ submission.ai_feedback.weaknesses }}</div>
     </div>
     
     <div class="feedback-item">
-        <span class="feedback-label" style="color: #ffc107;">📚 Kien thuc con thieu:</span>
+        <span class="feedback-label" style="color: #ffc107;">📚 Kiến thức còn thiếu:</span>
         <div class="feedback-content">{{ submission.ai_feedback.missing_knowledge }}</div>
     </div>
     
     <div class="feedback-item">
-        <span class="feedback-label" style="color: #17a2b8;">📝 Dang bai can luyen tap:</span>
+        <span class="feedback-label" style="color: #17a2b8;">📝 Dạng bài cần luyện tập:</span>
         <div class="feedback-content">{{ submission.ai_feedback.improvement_areas }}</div>
     </div>
     
     <div class="feedback-item">
-        <span class="feedback-label" style="color: #2193b0;">💡 Loi khuyen:</span>
+        <span class="feedback-label" style="color: #2193b0;">💡 Lời khuyên:</span>
         <div class="feedback-content">{{ submission.ai_feedback.suggestions }}</div>
     </div>
 </div>
@@ -595,10 +595,10 @@
                     {% endif %}">
                     {{ option }}
                     {% if is_selected %}
-                        <strong style="color: #2196F3;"> ← Ban chon</strong>
+                        <strong style="color: #2196F3;"> ← Bạn chọn</strong>
                     {% endif %}
                     {% if is_correct_option and not is_selected %}
-                        <strong style="color: #4caf50;"> ← Dap an dung</strong>
+                        <strong style="color: #4caf50;"> ← Đáp án đúng</strong>
                     {% endif %}
                 </div>
             {% endfor %}

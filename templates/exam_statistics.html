@@ -1,26 +1,26 @@
 <!-- templates/exam_statistics.html -->
 {% extends "layout.html" %}
 
-{% block title %}Thong ke hoc sinh{% endblock %}
+{% block title %}Thống kê học sinh{% endblock %}
 
 {% block content %}
-<h2>THONG KE KET QUA HOC SINH</h2>
+<h2>THỐNG KÊ KẾT QUẢ HỌC SINH</h2>
 
 <p style="text-align: right; margin-bottom: 20px;">
-  <a href="{{ url_for('dashboard_teacher') }}">Quay lai trang quan ly</a>
+  <a href="{{ url_for('dashboard_teacher') }}">Quay lại trang quản lý</a>
 </p>
 
 {% if stats %}
 <div style="margin-bottom: 30px;">
-  <h3 style="color: #00796b;">TONG QUAN</h3>
+  <h3 style="color: #00796b;">TỔNG QUAN</h3>
   <table style="width: 100%; border-collapse: collapse;">
     <thead>
       <tr style="background-color: #e0f2f1;">
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Ten hoc sinh</th>
-        <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">So bai da lam</th>
-        <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Tong so bai</th>
-        <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Ti le hoan thanh</th>
-        <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Diem trung binh</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Tên học sinh</th>
+        <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Số bài đã làm</th>
+        <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Tổng số bài</th>
+        <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Tỉ lệ hoàn thành</th>
+        <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Điểm trung bình</th>
       </tr>
     </thead>
     <tbody>
@@ -46,7 +46,7 @@
 </div>
 
 <div>
-  <h3 style="color: #00796b;">CHI TIET TUNG HOC SINH</h3>
+  <h3 style="color: #00796b;">CHI TIẾT TỪNG HỌC SINH</h3>
   {% for username, stat in stats.items() %}
   <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
     <h4 style="margin-top: 0; color: #00796b;">{{ stat.fullname }} ({{ username }})</h4>
@@ -55,18 +55,18 @@
     <table style="width: 100%; border-collapse: collapse; background-color: white;">
       <thead>
         <tr style="background-color: #e0f2f1;">
-          <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">De thi</th>
-          <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Loai</th>
-          <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Ngay nop</th>
-          <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Diem</th>
+          <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Đề thi</th>
+          <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Loại</th>
+          <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Ngày nộp</th>
+          <th style="padding: 10px; text-align: center; border: 1px solid #ddd;">Điểm</th>
         </tr>
       </thead>
       <tbody>
         {% for submission in stat.submissions %}
         <tr>
-          <td style="padding: 10px; border: 1px solid #ddd;">De {{ submission.exam_id }}</td>
+          <td style="padding: 10px; border: 1px solid #ddd;">Đề {{ submission.exam_id }}</td>
           <td style="padding: 10px; text-align: center; border: 1px solid #ddd;">
-            {% if submission.type == 'multiple_choice' %}Trac nghiem{% else %}Tu luan{% endif %}
+            {% if submission.type == 'multiple_choice' %}Trắc nghiệm{% else %}Tự luận{% endif %}
           </td>
           <td style="padding: 10px; text-align: center; border: 1px solid #ddd;">{{ submission.submitted_at }}</td>
           <td style="padding: 10px; text-align: center; border: 1px solid #ddd;">
@@ -75,7 +75,7 @@
               {{ submission.score }}/10
             </strong>
             {% else %}
-            <span style="color: #ff9800;">Chua cham</span>
+            <span style="color: #ff9800;">Chưa chấm</span>
             {% endif %}
           </td>
         </tr>
@@ -83,12 +83,12 @@
       </tbody>
     </table>
     {% else %}
-    <p style="color: #666; margin: 10px 0;">Hoc sinh chua lam bai thi nao.</p>
+    <p style="color: #666; margin: 10px 0;">Học sinh chưa làm bài thi nào.</p>
     {% endif %}
   </div>
   {% endfor %}
 </div>
 {% else %}
-<p style="color: #666; text-align: center; margin-top: 50px;">Chua co du lieu thong ke.</p>
+<p style="color: #666; text-align: center; margin-top: 50px;">Chưa có dữ liệu thống kê.</p>
 {% endif %}
 {% endblock %}

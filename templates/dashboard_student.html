@@ -199,23 +199,23 @@
   }
 </style>
 
-<h2>TRANG HOC SINH</h2>
+<h2>TRANG HỌC SINH</h2>
 
 <p style="text-align: right; margin-bottom: 20px;">
-  Xin chao, <strong>{{ session['exam_username'] }}</strong> | 
-  <a href="{{ url_for('logout_exam') }}">Dang xuat</a>
+  Xin chào, <strong>{{ session['exam_username'] }}</strong> | 
+  <a href="{{ url_for('logout_exam') }}">Đăng xuất</a>
 </p>
 
 <div style="margin-bottom: 30px;">
-  <h3 style="color: #00796b;">DE THI HIEN CO</h3>
+  <h3 style="color: #00796b;">Đề thi hiện có</h3>
   {% if exams %}
   <table style="width: 100%; border-collapse: collapse;">
     <thead>
       <tr style="background-color: #e0f2f1;">
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Tieu de</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Loai</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thoi gian</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thao tac</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Tiêu đề</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Loại</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thời gian</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Thao tác</th>
       </tr>
     </thead>
     <tbody>
@@ -223,40 +223,40 @@
       <tr>
         <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.title }}</td>
         <td style="padding: 12px; border: 1px solid #ddd;">
-          {% if exam.type == 'multiple_choice' %}Trac nghiem
-          {% elif exam.type == 'mixed' %}Hon hop
-          {% else %}Tu luan{% endif %}
+          {% if exam.type == 'multiple_choice' %}Trắc nghiệm
+          {% elif exam.type == 'mixed' %}Hỗn hợp
+          {% else %}Tự luận{% endif %}
         </td>
-        <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.duration }} phut</td>
+        <td style="padding: 12px; border: 1px solid #ddd;">{{ exam.duration }} phút</td>
         <td style="padding: 12px; border: 1px solid #ddd;">
-          <a href="{{ url_for('do_exam', exam_id=exam_id) }}" style="display: inline-block; padding: 6px 12px; background-color: #009688; color: white; border-radius: 6px; text-decoration: none; font-size: 14px;">Lam bai</a>
+          <a href="{{ url_for('do_exam', exam_id=exam_id) }}" style="display: inline-block; padding: 6px 12px; background-color: #009688; color: white; border-radius: 6px; text-decoration: none; font-size: 14px;">Làm bài</a>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
   {% else %}
-  <p style="color: #666;">Chua co de thi nao.</p>
+  <p style="color: #666;">Chưa có đề thi nào.</p>
   {% endif %}
 </div>
 
 <!-- CẬP NHẬT PHẦN KẾT QUẢ - Hiển thị feedback AI -->
 <div style="margin-bottom: 30px;">
-  <h3 style="color: #00796b;">🎯 KET QUA CUA BAN</h3>
+  <h3 style="color: #00796b;"> KẾT QUẢ CỦA BẠN</h3>
   <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
-    🤖 Bai tu luan duoc AI tu dong cham va phan hoi ngay sau khi nop.
+    Bài tự luận được AI chấm sau khi nộp
   </p>
   
   {% if my_submissions %}
   <table style="width: 100%; border-collapse: collapse;">
     <thead>
       <tr style="background-color: #e0f2f1;">
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">De thi</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Loai</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Ngay nop</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Diem</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Trang thai</th>
-        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Chi tiet</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Đề thi</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Loại</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Ngày nộp</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Điểm</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Trạng thái</th>
+        <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Chi tiết</th>
       </tr>
     </thead>
     <tbody>
@@ -266,16 +266,16 @@
           {% if exams.get(submission.exam_id) %}
             <strong>{{ exams[submission.exam_id].title }}</strong>
           {% else %}
-            <span style="color: #999;">Khong tim thay de</span>
+            <span style="color: #999;">Không tìm thấy đề</span>
           {% endif %}
         </td>
         <td style="padding: 12px; border: 1px solid #ddd;">
           {% if submission.type == 'essay' %}
-            <span style="color: #f57c00;">📝 Tu luan</span>
+            <span style="color: #f57c00;">📝 Tự luận</span>
           {% elif submission.type == 'mixed' %}
-            <span style="color: #9c27b0;">🔀 Hon hop</span>
+            <span style="color: #9c27b0;">🔀 Hỗn hợp</span>
           {% else %}
-            <span style="color: #2196f3;">✓ Trac nghiem</span>
+            <span style="color: #2196f3;">✓ Trắc nghiệm</span>
           {% endif %}
         </td>
         <td style="padding: 12px; border: 1px solid #ddd;">{{ submission.submitted_at }}</td>
@@ -283,28 +283,28 @@
           {% if submission.score is not none %}
             <strong style="color: #00796b; font-size: 18px;">{{ submission.score }}/10</strong>
           {% else %}
-            <span class="score-badge score-pending">⏳ Dang cho</span>
+            <span class="score-badge score-pending">Đang chờ</span>
           {% endif %}
         </td>
         <td style="padding: 12px; border: 1px solid #ddd;">
           {% if submission.teacher_adjusted %}
             <span class="score-badge score-teacher">
-              ✓ GV da dieu chinh
+              ✓ GV đã điều chỉnh
             </span>
           {% elif submission.ai_graded %}
             <span class="score-badge score-ai">
-              🤖 AI da cham
+              🤖 AI đã chấm
             </span>
           {% else %}
             <span class="score-badge score-pending">
-              ⏳ Chua cham
+              ⏳ Chưa chấm
             </span>
           {% endif %}
           
           <!-- Hiển thị feedback AI ngắn gọn nếu có -->
           {% if submission.ai_feedback and submission.type == 'essay' %}
             <div class="feedback-preview">
-              💡 <strong>Diem manh:</strong> {{ submission.ai_feedback.strengths[:80] }}{% if submission.ai_feedback.strengths|length > 80 %}...{% endif %}
+              💡 <strong>Diểm mạnh:</strong> {{ submission.ai_feedback.strengths[:80] }}{% if submission.ai_feedback.strengths|length > 80 %}...{% endif %}
             </div>
           {% endif %}
         </td>
@@ -312,10 +312,10 @@
           {% if submission.score is not none %}
             <a href="{{ url_for('view_submission', submission_index=loop.index0) }}" 
                style="display: inline-block; padding: 8px 16px; background-color: #28a745; color: white; border-radius: 20px; text-decoration: none; font-size: 14px; font-weight: 600;">
-              📋 Xem chi tiet
+              📋Xem chi tiết
             </a>
           {% else %}
-            <span style="color: #ff9800; font-size: 14px;">Dang cho cham...</span>
+            <span style="color: #ff9800; font-size: 14px;">Đang chờ chấm...</span>
           {% endif %}
         </td>
       </tr>
@@ -323,19 +323,19 @@
     </tbody>
   </table>
   {% else %}
-  <p style="color: #666;">Ban chua lam bai thi nao.</p>
+  <p style="color: #666;">Chưa làm bài thi nào.</p>
   {% endif %}
 </div>
 
 <div>
   <div class="section-header">
-    <h3>📚 TAI LIEU HOC TAP</h3>
+    <h3>📚 TÀI LIỆU HỌC TẬP</h3>
   </div>
   
   <div class="grade-tabs">
-    <button onclick="showGrade('10')" class="grade-tab active">📘 Lop 10</button>
-    <button onclick="showGrade('11')" class="grade-tab">📗 Lop 11</button>
-    <button onclick="showGrade('12')" class="grade-tab">📕 Lop 12</button>
+    <button onclick="showGrade('10')" class="grade-tab active">📘 Lớp 10</button>
+    <button onclick="showGrade('11')" class="grade-tab">📗 Lớp 11</button>
+    <button onclick="showGrade('12')" class="grade-tab">📕 Lớp 12</button>
   </div>
   
   {% for grade in ['10', '11', '12'] %}
@@ -353,18 +353,18 @@
           </div>
           
           <span class="material-type-badge {% if material.type == 'file' %}file{% else %}video{% endif %}">
-            {% if material.type == 'file' %}Tai lieu{% else %}Video{% endif %}
+            {% if material.type == 'file' %}Tài liệu{% else %}Video{% endif %}
           </span>
           
           <h5>{{ material.title }}</h5>
-          <p>{{ material.description or 'Khong co mo ta' }}</p>
+          <p>{{ material.description or 'không có mô tả' }}</p>
           <small>👤 {{ material.uploaded_by }} • 📅 {{ material.uploaded_at }}</small>
           
           <div class="material-actions">
             {% if material.type == 'file' %}
               <a href="{{ url_for('download_material', filename=material.filename) }}" 
                  class="btn-material">
-                📥 Tai xuong
+                📥 Tải xuống
               </a>
             {% else %}
               <a href="{{ material.video_link }}" 
@@ -380,7 +380,7 @@
     {% else %}
       <div class="no-materials">
         <p style="font-size: 48px; margin-bottom: 10px;">📭</p>
-        <p>Chua co tai lieu nao cho lop {{ grade }}</p>
+        <p>Chưa có tài liệu nào cho lớp {{ grade }}</p>
       </div>
     {% endif %}
   </div>
